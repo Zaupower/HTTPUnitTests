@@ -11,5 +11,6 @@ namespace UserServiceAPITests.Models.Responses.Base
     {
         public HttpStatusCode HttpStatusCode { get; set; }
         public T Body { get; set; }
+        public string Content { get; set; }
     }
 }

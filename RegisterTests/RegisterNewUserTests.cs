@@ -15,6 +15,7 @@ namespace UserServiceAPITests.RegisterTests
     public class RegisterNewUserTests
     {
         private UserServiceServiceProvider _serviceProvider = new UserServiceServiceProvider();
+
         [SetUp]
         public void Setup()
         {
@@ -44,27 +45,32 @@ namespace UserServiceAPITests.RegisterTests
         [Test]
         public async Task ValidUSer_DeleteUser_ResponseStatusIsOk()
         {
-
-            UserServiceServiceProvider serviceProvider = new UserServiceServiceProvider();
-
-            CreateUserRequest request = new CreateUserRequest
+            CreateUserRequest createUSerRequest = new CreateUserRequest
             {
                 firstName = "fisrt_name_test1",
                 lastName = "last_name_test1"
             };
 
-            HttpResponse<string> response = await serviceProvider.CreateUser(request);
+            HttpResponse<string> createUserResponse = await _serviceProvider.CreateUser(createUSerRequest);
 
             ////
 
-            GetUserResponse createUserResponse = new GetUserResponse
+            GetUserResponse GetUserResponse = new GetUserResponse
             {
-                id = int.Parse(response.Body),
+                id = int.Parse(createUserResponse.Body),
             };
 
+            var delteteUserRequest = new 
+            {
+                userId = GetUserResponse.id
+            };
+
+            HttpResponse<string> createUserResponse = await serviceProvider.CreateUser(delteteUserRequest);
+
+
             //Assert
-            Assert.Greater(createUserResponse.id, 0);
-            Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);
+            //Assert.Greater(createUserResponse.id, 0);
+            //Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);
 
         }
     }
