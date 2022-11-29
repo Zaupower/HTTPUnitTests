@@ -18,7 +18,7 @@ namespace UserServiceAPITests
         private readonly string _baseUrl = "https://userservice-uat.azurewebsites.net";
         private HttpClient httpClient = new HttpClient();
 
-        public async Task<HttpResponse<GetUserResponse>> CreateUser(CreateUserRequest request)
+        public async Task<HttpResponse<int>> CreateUser(CreateUserRequest request)
         {
             
 
@@ -33,7 +33,7 @@ namespace UserServiceAPITests
             };
             HttpResponseMessage response = await httpClient.SendAsync(createUserrequest);
 
-            return await response.ToCommonResponse<GetUserResponse>();
+            return await response.ToCommonResponse<int>();
         }
 
         public async Task<HttpResponse<object>> DeleteUser(int userId)
@@ -41,7 +41,7 @@ namespace UserServiceAPITests
             HttpRequestMessage createUserrequest = new HttpRequestMessage
             {
                 Method = HttpMethod.Delete,
-                RequestUri = new Uri($"{_baseUrl}/DeleteUser?userId={userId}")
+                RequestUri = new Uri($"{_baseUrl}/Register/DeleteUser?userId={userId}")
 
             };
             HttpResponseMessage response = await httpClient.SendAsync(createUserrequest);
