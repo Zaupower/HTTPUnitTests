@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using UserServiceAPITests.Models;
@@ -19,9 +20,9 @@ namespace UserServiceAPITests.RegisterTests
         }
 
         [Test]
-        public void CanRegister_NewUSer()
+        public async Task ValidUSer_PerformRequest_ResponseStatusIsOk()
         {
-            HttpClient client = new HttpClient();
+            HttpClient httpClient = new HttpClient();
 
             CreateUserRequest body = new CreateUserRequest
             {
@@ -35,13 +36,15 @@ namespace UserServiceAPITests.RegisterTests
             {
                 Method = HttpMethod.Post,
                 RequestUri = new Uri($"{_baseUrl}/Register/RegisterNewUser"),
-                Content = new StringContent(serializedBody)
+                Content = new StringContent(serializedBody, Encoding.UTF8, "application/json")
 
             };
 
-            HttpResponseMessage response = client.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
+            HttpStatusCode responseStatus = response.StatusCode;
 
-            Assert.Pass();
+            Assert.AreEqual(HttpStatusCode.OK, responseStatus);
+
         }
     }
 }
