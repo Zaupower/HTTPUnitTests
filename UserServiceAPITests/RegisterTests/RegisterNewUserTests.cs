@@ -12,7 +12,7 @@ namespace UserServiceAPITests.RegisterTests
     
     public class RegisterNewUserTests
     {
-        private readonly string _baseUrl = "https://userservice-uat.azurewebsites.net";
+        
 
         [SetUp]
         public void Setup()
@@ -22,27 +22,30 @@ namespace UserServiceAPITests.RegisterTests
         [Test]
         public async Task ValidUSer_PerformRequest_ResponseStatusIsOk()
         {
-            HttpClient httpClient = new HttpClient();
+            
+            UserServiceServiceProvider serviceProvider = new UserServiceServiceProvider();
 
-            CreateUserRequest body = new CreateUserRequest
+            CreateUserRequest request = new CreateUserRequest
             {
                 firstName = "fisrt_name_test1",
                 lastName = "last_name_test1"
             };
-            
-            string serializedBody = JsonConvert.SerializeObject(body);
 
-            HttpRequestMessage request = new HttpRequestMessage
-            {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri($"{_baseUrl}/Register/RegisterNewUser"),
-                Content = new StringContent(serializedBody, Encoding.UTF8, "application/json")
+            HttpStatusCode responseStatus = await serviceProvider.CreateUser(request);
 
-            };
+            ////
 
-            HttpResponseMessage response = await httpClient.SendAsync(request);
-            HttpStatusCode responseStatus = response.StatusCode;
+            ////GetUserResponse createUserResponse = new GetUserResponse 
+            ////{ 
+            ////    id = int.Parse(responseContent),
+            ////};
 
+            //////Assert
+
+            //////ID is int greater than 0
+            ////Assert.Greater(createUserResponse.id, 0);
+
+            //Status Code is OK
             Assert.AreEqual(HttpStatusCode.OK, responseStatus);
 
         }
