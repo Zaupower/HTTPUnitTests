@@ -32,12 +32,9 @@ namespace UserServiceAPITests.RegisterTests
                 lastName = "last_name_test1"
             };
 
-            HttpResponse<string> response = await _serviceProvider.CreateUser(request);
-            GetUserResponse createUserResponse = new GetUserResponse
-            {
-                id = int.Parse(response.Body),
-            };
-            Assert.Greater(createUserResponse.id, 0);
+            HttpResponse<GetUserResponse> response = await _serviceProvider.CreateUser(request);
+            
+            Assert.Greater(response.Body.id, 0);
             Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);
 
         }
@@ -45,32 +42,25 @@ namespace UserServiceAPITests.RegisterTests
         [Test]
         public async Task ValidUSer_DeleteUser_ResponseStatusIsOk()
         {
-            CreateUserRequest createUSerRequest = new CreateUserRequest
+            //Precondition
+
+            CreateUserRequest request = new CreateUserRequest
             {
                 firstName = "fisrt_name_test1",
                 lastName = "last_name_test1"
             };
 
-            HttpResponse<string> createUserResponse = await _serviceProvider.CreateUser(createUSerRequest);
+            HttpResponse<GetUserResponse> createUserResponse = await _serviceProvider.CreateUser(request);
+            int userId = createUserResponse.Body.id;
+            //Action
 
-            ////
-
-            GetUserResponse GetUserResponse = new GetUserResponse
-            {
-                id = int.Parse(createUserResponse.Body),
-            };
-
-            var delteteUserRequest = new 
-            {
-                userId = GetUserResponse.id
-            };
-
-            HttpResponse<string> createUserResponse = await serviceProvider.CreateUser(delteteUserRequest);
+            var deleteResponse = await _serviceProvider.DeleteUser(userId);
 
 
             //Assert
             //Assert.Greater(createUserResponse.id, 0);
             //Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, deleteResponse.HttpStatusCode);
 
         }
     }

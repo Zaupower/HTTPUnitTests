@@ -6,7 +6,9 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using UserServiceAPITests.Extensions;
 using UserServiceAPITests.Models.Requests;
+using UserServiceAPITests.Models.Responses;
 using UserServiceAPITests.Models.Responses.Base;
 
 namespace UserServiceAPITests
@@ -16,7 +18,7 @@ namespace UserServiceAPITests
         private readonly string _baseUrl = "https://userservice-uat.azurewebsites.net";
         private HttpClient httpClient = new HttpClient();
 
-        public async Task<HttpResponse<string>> CreateUser(CreateUserRequest request)
+        public async Task<HttpResponse<GetUserResponse>> CreateUser(CreateUserRequest request)
         {
             
 
@@ -30,16 +32,11 @@ namespace UserServiceAPITests
 
             };
             HttpResponseMessage response = await httpClient.SendAsync(createUserrequest);
-            string responseContent = await response.Content.ReadAsStringAsync();
 
-            return new HttpResponse<string> 
-            {
-              HttpStatusCode = response.StatusCode,
-              Body = responseContent
-            };
+            return await response.ToCommonResponse<GetUserResponse>();
         }
 
-        public async Task<HttpResponse<string>> DeleteUser(int userId)
+        public async Task<HttpResponse<object>> DeleteUser(int userId)
         {
             HttpRequestMessage createUserrequest = new HttpRequestMessage
             {
@@ -48,13 +45,7 @@ namespace UserServiceAPITests
 
             };
             HttpResponseMessage response = await httpClient.SendAsync(createUserrequest);
-            string responseContent = await response.Content.ReadAsStringAsync();
-
-            return new HttpResponse<string>
-            {
-                HttpStatusCode = response.StatusCode,
-                Body = responseContent
-            };
+            return await response.ToCommonResponse<object>();
         }
     }
 }
