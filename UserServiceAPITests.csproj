@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <Folder Include="CacheManagementTests\" />
-    <Folder Include="Models\Requests\" />
     <Folder Include="UserManagementTests\" />
   </ItemGroup>
 

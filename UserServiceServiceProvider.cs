@@ -6,7 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using UserServiceAPITests.Models;
+using UserServiceAPITests.Models.Requests;
 using UserServiceAPITests.Models.Responses.Base;
 
 namespace UserServiceAPITests
