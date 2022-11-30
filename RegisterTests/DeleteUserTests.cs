@@ -41,7 +41,32 @@ namespace UserServiceAPITests.RegisterTests
         }
 
         [Test]
-        public async Task InvalidUser_DeleteUser_ResponseStatusInternalServerError()
+        public async Task ValidUser_DeleteUserTwoTimes_ResponseStatusIsStatusInternalServerError()
+        {
+            //Precondition
+            CreateUserRequest request = new CreateUserRequest
+            {
+                firstName = "fisrt_name_test1",
+                lastName = "last_name_test1"
+            };
+
+            HttpResponse<int> createUserResponse = await _serviceProvider.CreateUser(request);
+            int userId = createUserResponse.Body;
+
+            //Action
+                //Delete first time
+            await _serviceProvider.DeleteUser(userId);
+                //Delete second time
+            var deleteResponse = await _serviceProvider.DeleteUser(userId);
+
+            //Assert
+            Assert.AreEqual(HttpStatusCode.InternalServerError, deleteResponse.HttpStatusCode);
+            Assert.AreEqual(deleteResponse.Content, "Sequence contains no elements");
+            Assert.AreEqual(null, deleteResponse.Body);
+        }
+
+        [Test]
+        public async Task InvalidUser_DeleteUser_ResponseStatusIsInternalServerError()
         {
             //Precondiction
             int userId = 0;

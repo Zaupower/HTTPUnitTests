@@ -40,15 +40,39 @@ namespace UserServiceAPITests.RegisterTests
             Assert.AreEqual(response.Body.ToString(), response.Content);
         }
 
-        [Test]
-        public async Task InvalidUser_RegisterNewUSer_ResponseStatusIsOk()
+        [Test, Combinatorial]
+        public async Task InvalidUser_RegisterNewUserFirstNameAllwaysNULL_ResponseStatusIsInternalServerError(
+            [Values(null)] string firstName,
+            [Values("TestCombinatorialLasttName", null )] string lastName)
         {
 
             //Precondition
             CreateUserRequest request = new CreateUserRequest
             {
-                firstName = null,
-                lastName = null
+                firstName = firstName,
+                lastName = lastName
+            };
+
+            //Action
+            HttpResponse<int> response = await _serviceProvider.CreateUser(request);
+
+            //Assert
+            Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
+            Assert.AreEqual(0, response.Body);
+            Assert.AreEqual("An error occurred while saving the entity changes. See the inner exception for details.", response.Content);
+        }
+
+        [Test, Combinatorial]
+        public async Task InvalidUser_RegisterNewUserLastNameAllwaysNULL_ResponseStatusIsInternalServerError(
+            [Values("TestCombinatorialFirstName", null)] string firstName,
+            [Values( null)] string lastName)
+        {
+
+            //Precondition
+            CreateUserRequest request = new CreateUserRequest
+            {
+                firstName = firstName,
+                lastName = lastName
             };
 
             //Action
