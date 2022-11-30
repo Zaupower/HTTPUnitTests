@@ -9,7 +9,7 @@ using UserServiceAPITests.Models.Responses.Base;
 
 namespace UserServiceAPITests.UserManagementTests
 {
-    public class SetUserStatusTests
+    public class UserStatusTests
     {
 
         private UserServiceServiceProvider _serviceProvider = new UserServiceServiceProvider();
@@ -39,9 +39,11 @@ namespace UserServiceAPITests.UserManagementTests
 
             //Action 
             HttpResponse<object> setUserStatusResponse = await _serviceProvider.SetUserStatus(setUserStatus);
-            
+
             //Assert
             Assert.AreEqual(HttpStatusCode.OK, setUserStatusResponse.HttpStatusCode);
+            Assert.AreEqual(null, setUserStatusResponse.Body);
+            Assert.AreEqual("", setUserStatusResponse.Content);
         }
 
         [Test]
@@ -67,6 +69,8 @@ namespace UserServiceAPITests.UserManagementTests
 
             //Assert
             Assert.AreEqual(HttpStatusCode.OK, setUserStatusResponse.HttpStatusCode);
+            Assert.AreEqual(null, setUserStatusResponse.Body);
+            Assert.AreEqual("", setUserStatusResponse.Content);
         }
 
         [Test]
@@ -85,8 +89,9 @@ namespace UserServiceAPITests.UserManagementTests
             HttpResponse<object> setUserStatusResponse = await _serviceProvider.SetUserStatus(setUserStatus);
 
             //Assert
-            Assert.AreEqual(setUserStatusResponse.Content, "Sequence contains no elements");
             Assert.AreEqual(HttpStatusCode.InternalServerError, setUserStatusResponse.HttpStatusCode);
+            Assert.AreEqual(null, setUserStatusResponse.Body);
+            Assert.AreEqual(setUserStatusResponse.Content, "Sequence contains no elements");
         }
 
         [Test]
@@ -105,11 +110,9 @@ namespace UserServiceAPITests.UserManagementTests
             HttpResponse<object> setUserStatusResponse = await _serviceProvider.SetUserStatus(setUserStatus);
 
             //Assert
-            Assert.AreEqual(setUserStatusResponse.Content, "Sequence contains no elements");
             Assert.AreEqual(HttpStatusCode.InternalServerError, setUserStatusResponse.HttpStatusCode);
+            Assert.AreEqual(null, setUserStatusResponse.Body);
+            Assert.AreEqual(setUserStatusResponse.Content, "Sequence contains no elements");
         }
-
-
-
     }
 }
