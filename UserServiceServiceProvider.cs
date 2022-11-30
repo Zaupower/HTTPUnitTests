@@ -47,5 +47,17 @@ namespace UserServiceAPITests
             HttpResponseMessage response = await httpClient.SendAsync(createUserrequest);
             return await response.ToCommonResponse<object>();
         }
+
+        public async Task<HttpResponse<object>> SetUserStatus(SetUserStatusModel userStatus)
+        {
+            HttpRequestMessage setUserStatusRequest = new HttpRequestMessage
+            {
+                Method = HttpMethod.Put,
+                RequestUri = new Uri($"{_baseUrl}/UserManagement/SetUserStatus?userId={userStatus.UserId}&newStatus={userStatus.NewStatus}")
+
+            };
+            HttpResponseMessage response = await httpClient.SendAsync(setUserStatusRequest);
+            return await response.ToCommonResponse<object>();
+        }
     }
 }
