@@ -35,8 +35,9 @@ namespace UserServiceAPITests.RegisterTests
             //Action
             HttpResponse<int> response = await _serviceProvider.CreateUser(request);
             
-            Assert.Greater( response.Body,0);
             Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);
+            Assert.Greater( response.Body,0);
+            Assert.AreEqual(response.Body.ToString(), response.Content);
         }
 
         [Test]
@@ -54,8 +55,9 @@ namespace UserServiceAPITests.RegisterTests
             HttpResponse<int> response = await _serviceProvider.CreateUser(request);
 
             //Assert
-            Assert.AreEqual(response.Content, "An error occurred while saving the entity changes. See the inner exception for details.");
             Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
+            Assert.AreEqual(0, response.Body);
+            Assert.AreEqual("An error occurred while saving the entity changes. See the inner exception for details.", response.Content);
         }
     }
 }

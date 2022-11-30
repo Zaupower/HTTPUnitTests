@@ -38,7 +38,7 @@ namespace UserServiceAPITests.UserManagementTests
             //Assert
             Assert.AreEqual(HttpStatusCode.OK, getUserStatusResponse.HttpStatusCode);
             Assert.AreEqual(false, getUserStatusResponse.Body);
-            Assert.AreEqual("false", getUserStatusResponse.Content);
+            StringAssert.AreEqualIgnoringCase(getUserStatusResponse.Body.ToString(), getUserStatusResponse.Content);
         }
 
         [Test]
@@ -69,7 +69,7 @@ namespace UserServiceAPITests.UserManagementTests
             //Assert
             Assert.AreEqual(HttpStatusCode.OK, getUserStatusResponse.HttpStatusCode);
             Assert.AreEqual(true, getUserStatusResponse.Body);
-            Assert.AreEqual("true", getUserStatusResponse.Content);
+            StringAssert.AreEqualIgnoringCase(getUserStatusResponse.Body.ToString(), getUserStatusResponse.Content);
         }
 
         [Test]
@@ -100,7 +100,7 @@ namespace UserServiceAPITests.UserManagementTests
             //Assert
             Assert.AreEqual(HttpStatusCode.OK, getUserStatusResponse.HttpStatusCode);
             Assert.AreEqual(false, getUserStatusResponse.Body);
-            Assert.AreEqual("false", getUserStatusResponse.Content);
+            StringAssert.AreEqualIgnoringCase(getUserStatusResponse.Body.ToString(), getUserStatusResponse.Content);
         }
     }
 }

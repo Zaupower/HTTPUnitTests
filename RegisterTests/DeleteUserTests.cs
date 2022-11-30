@@ -36,6 +36,8 @@ namespace UserServiceAPITests.RegisterTests
 
             //Assert
             Assert.AreEqual(HttpStatusCode.OK, deleteResponse.HttpStatusCode);
+            Assert.AreEqual(null, deleteResponse.Body);
+            Assert.AreEqual("", deleteResponse.Content);
         }
 
         [Test]
@@ -48,8 +50,9 @@ namespace UserServiceAPITests.RegisterTests
             var deleteResponse = await _serviceProvider.DeleteUser(userId);
 
             //Assert
-            Assert.AreEqual(deleteResponse.Content, "Sequence contains no elements");
             Assert.AreEqual(HttpStatusCode.InternalServerError, deleteResponse.HttpStatusCode);
+            Assert.AreEqual(deleteResponse.Content, "Sequence contains no elements");
+            Assert.AreEqual(null, deleteResponse.Body);
         }
     }
 }
