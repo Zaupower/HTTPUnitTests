@@ -20,8 +20,6 @@ namespace UserServiceAPITests
 
         public async Task<HttpResponse<int>> CreateUser(CreateUserRequest request)
         {
-            
-
             string serializedBody = JsonConvert.SerializeObject(request);
 
             HttpRequestMessage createUserrequest = new HttpRequestMessage

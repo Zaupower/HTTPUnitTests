@@ -60,7 +60,8 @@ namespace UserServiceAPITests.UserManagementTests
                 UserId = createUserresponse.Body,
                 NewStatus = newUserStatus
             };
-            HttpResponse<object> setUserStatusResponse = await _serviceProvider.SetUserStatus(setUserStatus);
+            
+            await _serviceProvider.SetUserStatus(setUserStatus);
 
             //Action 
             HttpResponse<object> getUserStatusResponse = await _serviceProvider.GetUserStatus(userId);
@@ -90,7 +91,8 @@ namespace UserServiceAPITests.UserManagementTests
                 UserId = createUserresponse.Body,
                 NewStatus = newUserStatus
             };
-            HttpResponse<object> setUserStatusResponse = await _serviceProvider.SetUserStatus(setUserStatus);
+            
+            await _serviceProvider.SetUserStatus(setUserStatus);
 
             //Action 
             HttpResponse<object> getUserStatusResponse = await _serviceProvider.GetUserStatus(userId);
