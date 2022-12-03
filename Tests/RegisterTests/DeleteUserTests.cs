@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UserServiceAPITests.Models.Requests;
 using UserServiceAPITests.Models.Responses.Base;
+using UserServiceAPITests.ServiceProvider;
 
 namespace UserServiceAPITests.RegisterTests
 {

@@ -11,7 +11,7 @@ using UserServiceAPITests.Models.Requests;
 using UserServiceAPITests.Models.Responses;
 using UserServiceAPITests.Models.Responses.Base;
 
-namespace UserServiceAPITests
+namespace UserServiceAPITests.ServiceProvider
 {
     public class UserServiceServiceProvider
     {
