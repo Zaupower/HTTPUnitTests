@@ -81,5 +81,16 @@ namespace UserServiceAPITests.ServiceProvider
             HttpResponseMessage response = await httpClient.SendAsync(setUserStatusRequest);
             return await response.ToCommonResponse<List<GetUserResponse>>();
         }
+        public async Task<HttpResponse<object>> DeleteCacheManagement()
+        {
+            HttpRequestMessage setUserStatusRequest = new HttpRequestMessage
+            {
+                Method = HttpMethod.Delete,
+                RequestUri = new Uri($"{_baseUrl}/CacheManagement")
+
+            };
+            HttpResponseMessage response = await httpClient.SendAsync(setUserStatusRequest);
+            return await response.ToCommonResponse<object>();
+        }
     }
 }
