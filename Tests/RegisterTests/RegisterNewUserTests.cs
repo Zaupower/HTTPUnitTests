@@ -27,10 +27,8 @@ namespace UserServiceAPITests.RegisterTests
         [Test]
         public async Task ValidUser_RegisterNewUSer_ResponseStatusIsOk([Values(0, 1, 7, 15)] int numberOfUsers)
         {
-
             //Precondition
             List<CreateUserRequest> requestUsers = _generateUsersRequest.generateUsers(numberOfUsers);
-            List<int> userIdResponse = new List<int>();
 
             foreach (CreateUserRequest requestUser in requestUsers)
             {
@@ -49,7 +47,6 @@ namespace UserServiceAPITests.RegisterTests
             [Values(null)] string firstName,
             [Values("TestCombinatorialLasttName", null )] string lastName)
         {
-
             //Precondition
             CreateUserRequest request = new CreateUserRequest
             {
@@ -71,7 +68,6 @@ namespace UserServiceAPITests.RegisterTests
             [Values("TestCombinatorialFirstName", null)] string firstName,
             [Values( null)] string lastName)
         {
-
             //Precondition
             CreateUserRequest request = new CreateUserRequest
             {
