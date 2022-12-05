@@ -51,8 +51,6 @@ namespace UserServiceAPITests.Tests.CacheManagementTests
         {
 
             //Precondition
-            //Delete current cache
-            await _serviceProvider.DeleteCacheManagement();
 
             List<CreateUserRequest> requestUsers = _generateUsersRequest.generateUsers(numberOfUsers);
 
@@ -60,9 +58,10 @@ namespace UserServiceAPITests.Tests.CacheManagementTests
             {
                 await _serviceProvider.CreateUser(request);
             }
-            await _serviceProvider.DeleteCacheManagement();
 
             //Action
+                //Delete current cache
+            await _serviceProvider.DeleteCacheManagement();
             HttpResponse<List<GetUserResponse>> reponse = await _serviceProvider.GetCacheManagement();
             List<GetUserResponse> cacheUsers = reponse.Body;
 
