@@ -82,14 +82,14 @@ namespace UserServiceAPITests.Tests.CacheManagementTests
             List<CreateUserRequest> requestUsers = _generateUsersRequest.generateUsers(numberOfUsers);
             List<int> usersCreated = new List<int>();
             List<SetUserStatusModel> expectedUserStatus = new List<SetUserStatusModel>();
-            //Create users
+                //Create users
             foreach (CreateUserRequest request in requestUsers)
             {
                 HttpResponse<int> response = await _serviceProvider.CreateUser(request);
                 usersCreated.Add(response.Body);
             }
             
-            //Update User status
+                //Update User status
             foreach (int userId in usersCreated)
             {
                 SetUserStatusModel setUserStatus = new SetUserStatusModel
@@ -106,6 +106,7 @@ namespace UserServiceAPITests.Tests.CacheManagementTests
             //Action
                 //Delete current cache
             await _serviceProvider.DeleteCacheManagement();
+
             HttpResponse<List<GetUserResponse>> reponse = await _serviceProvider.GetCacheManagement();
             List<GetUserResponse> cacheUsers = reponse.Body;
 
