@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using UserServiceAPITests.Helper;
 using UserServiceAPITests.Models.Requests;
 using UserServiceAPITests.Models.Responses;
 using UserServiceAPITests.Models.Responses.Base;
@@ -16,6 +17,7 @@ namespace UserServiceAPITests.RegisterTests
     public class RegisterNewUserTests
     {
         private UserServiceServiceProvider _serviceProvider = new UserServiceServiceProvider();
+        private GenerateUsersRequest _generateUsersRequest = new GenerateUsersRequest();
 
         [SetUp]
         public void Setup()
@@ -23,22 +25,23 @@ namespace UserServiceAPITests.RegisterTests
         }
 
         [Test]
-        public async Task ValidUser_RegisterNewUSer_ResponseStatusIsOk()
+        public async Task ValidUser_RegisterNewUSer_ResponseStatusIsOk([Values(0, 1, 7, 15)] int numberOfUsers)
         {
-            
-            //Precondition
-            CreateUserRequest request = new CreateUserRequest
-            {
-                firstName = "fisrtNameTest1",
-                lastName = "lastNameTest1"
-            };
 
-            //Action
-            HttpResponse<int> response = await _serviceProvider.CreateUser(request);
-            
-            Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);
-            Assert.Greater( response.Body,0);
-            Assert.AreEqual(response.Body.ToString(), response.Content);
+            //Precondition
+            List<CreateUserRequest> requestUsers = _generateUsersRequest.generateUsers(numberOfUsers);
+            List<int> userIdResponse = new List<int>();
+
+            foreach (CreateUserRequest requestUser in requestUsers)
+            {
+                //Action
+                HttpResponse<int> response = await _serviceProvider.CreateUser(requestUser);
+                //Assert
+                Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);
+                Assert.Greater(response.Body, 0);
+                Assert.AreEqual(response.Body.ToString(), response.Content);
+
+            }                        
         }
 
         [Test, Combinatorial]
