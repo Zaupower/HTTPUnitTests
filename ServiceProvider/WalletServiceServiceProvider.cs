@@ -52,7 +52,7 @@ namespace UserServiceAPITests.ServiceProvider
             HttpRequestMessage chargeRequest = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri($"{_baseUrl}/Balance/GetTransactions/{userId}")
+                RequestUri = new Uri($"{_baseUrl}/Balance/GetTransactions?userId={userId}")
 
             };
             HttpResponseMessage response = await httpClient.SendAsync(chargeRequest);
@@ -66,7 +66,7 @@ namespace UserServiceAPITests.ServiceProvider
             HttpRequestMessage chargeRequest = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri($"{_baseUrl}/Balance/GetTransactions/{transactionId}")
+                RequestUri = new Uri($"{_baseUrl}/Balance/RevertTransaction?transactionId={transactionId}")
 
             };
             HttpResponseMessage response = await httpClient.SendAsync(chargeRequest);
