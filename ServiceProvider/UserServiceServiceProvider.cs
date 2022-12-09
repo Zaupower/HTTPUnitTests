@@ -7,9 +7,9 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using UserServiceAPITests.Extensions;
-using UserServiceAPITests.Models.Requests;
-using UserServiceAPITests.Models.Responses;
+using UserServiceAPITests.Models.Requests.UserService;
 using UserServiceAPITests.Models.Responses.Base;
+using UserServiceAPITests.Models.Responses.UserService;
 
 namespace UserServiceAPITests.ServiceProvider
 {
@@ -76,7 +76,6 @@ namespace UserServiceAPITests.ServiceProvider
             {
                 Method = HttpMethod.Get,
                 RequestUri = new Uri($"{_baseUrl}/CacheManagement")
-
             };
             HttpResponseMessage response = await httpClient.SendAsync(setUserStatusRequest);
             return await response.ToCommonResponse<List<GetUserResponse>>();

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UserServiceAPITests.Models.Responses
+namespace UserServiceAPITests.Models.Responses.UserService
 {
     public class GetUserResponse
     {

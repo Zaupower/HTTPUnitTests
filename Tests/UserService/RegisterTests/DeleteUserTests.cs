@@ -5,7 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using UserServiceAPITests.Helper;
-using UserServiceAPITests.Models.Requests;
+using UserServiceAPITests.Models.Requests.UserService;
 using UserServiceAPITests.Models.Responses.Base;
 using UserServiceAPITests.ServiceProvider;
 

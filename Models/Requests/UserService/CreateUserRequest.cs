@@ -1,4 +1,4 @@
-﻿namespace UserServiceAPITests.Models.Requests
+﻿namespace UserServiceAPITests.Models.Requests.UserService
 {
     public class CreateUserRequest
     {

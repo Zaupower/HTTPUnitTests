@@ -6,9 +6,9 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using UserServiceAPITests.Helper;
-using UserServiceAPITests.Models.Requests;
-using UserServiceAPITests.Models.Responses;
+using UserServiceAPITests.Models.Requests.UserService;
 using UserServiceAPITests.Models.Responses.Base;
+using UserServiceAPITests.Models.Responses.UserService;
 using UserServiceAPITests.ServiceProvider;
 
 namespace UserServiceAPITests.Tests.CacheManagementTests
@@ -38,11 +38,11 @@ namespace UserServiceAPITests.Tests.CacheManagementTests
             }            
 
             //Action
-            HttpResponse<List<GetUserResponse>> reponse = await _serviceProvider.GetCacheManagement();
-            List<GetUserResponse> cacheUsers = reponse.Body;
+            HttpResponse<List<GetUserResponse>> response = await _serviceProvider.GetCacheManagement();
+            List<GetUserResponse> cacheUsers = response.Body;
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.OK, reponse.HttpStatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);
             cacheUsers.Should().BeEquivalentTo(requestUsers);//Body
         }
 
@@ -62,11 +62,11 @@ namespace UserServiceAPITests.Tests.CacheManagementTests
             //Action
                 //Delete current cache
             await _serviceProvider.DeleteCacheManagement();
-            HttpResponse<List<GetUserResponse>> reponse = await _serviceProvider.GetCacheManagement();
-            List<GetUserResponse> cacheUsers = reponse.Body;
+            HttpResponse<List<GetUserResponse>> response = await _serviceProvider.GetCacheManagement();
+            List<GetUserResponse> cacheUsers = response.Body;
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.OK, reponse.HttpStatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);
             Assert.IsEmpty(cacheUsers);
         }
     }

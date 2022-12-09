@@ -6,11 +6,11 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using UserServiceAPITests.Helper;
-using UserServiceAPITests.Models.Requests;
 using UserServiceAPITests.Models.Responses.Base;
-using UserServiceAPITests.Models.Responses;
 using UserServiceAPITests.ServiceProvider;
 using UserServiceAPITests.UserManagementTests;
+using UserServiceAPITests.Models.Requests.UserService;
+using UserServiceAPITests.Models.Responses.UserService;
 
 namespace UserServiceAPITests.Tests.CacheManagementTests
 {
@@ -34,8 +34,8 @@ namespace UserServiceAPITests.Tests.CacheManagementTests
                 //Create users
             foreach (CreateUserRequest request in requestUsers)
             {
-                HttpResponse<int> response = await _serviceProvider.CreateUser(request);
-                usersCreated.Add(response.Body);
+                HttpResponse<int> res = await _serviceProvider.CreateUser(request);
+                usersCreated.Add(res.Body);
             }
 
                 //Delete current cache
@@ -55,11 +55,11 @@ namespace UserServiceAPITests.Tests.CacheManagementTests
             }
 
             //Action
-            HttpResponse<List<GetUserResponse>> reponse = await _serviceProvider.GetCacheManagement();
-            List<GetUserResponse> cacheUsers = reponse.Body;
+            HttpResponse<List<GetUserResponse>> response = await _serviceProvider.GetCacheManagement();
+            List<GetUserResponse> cacheUsers = response.Body;
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.OK, reponse.HttpStatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);
             //cacheUsers.Should().BeEquivalentTo(expectedUserStatus);//Body
             for(int i = 0; i < cacheUsers.Count; i++)
             {
@@ -85,8 +85,8 @@ namespace UserServiceAPITests.Tests.CacheManagementTests
                 //Create users
             foreach (CreateUserRequest request in requestUsers)
             {
-                HttpResponse<int> response = await _serviceProvider.CreateUser(request);
-                usersCreated.Add(response.Body);
+                HttpResponse<int> res = await _serviceProvider.CreateUser(request);
+                usersCreated.Add(res.Body);
             }
             
                 //Update User status
@@ -107,11 +107,11 @@ namespace UserServiceAPITests.Tests.CacheManagementTests
                 //Delete current cache
             await _serviceProvider.DeleteCacheManagement();
 
-            HttpResponse<List<GetUserResponse>> reponse = await _serviceProvider.GetCacheManagement();
-            List<GetUserResponse> cacheUsers = reponse.Body;
+            HttpResponse<List<GetUserResponse>> response = await _serviceProvider.GetCacheManagement();
+            List<GetUserResponse> cacheUsers = response.Body;
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.OK, reponse.HttpStatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);
             Assert.IsEmpty(cacheUsers);
         }
     }

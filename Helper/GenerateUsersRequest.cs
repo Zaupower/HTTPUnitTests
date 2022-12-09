@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UserServiceAPITests.Models.Requests;
+using UserServiceAPITests.Models.Requests.UserService;
 
 namespace UserServiceAPITests.Helper
 {

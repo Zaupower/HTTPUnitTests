@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UserServiceAPITests.Models.Requests
+namespace UserServiceAPITests.Models.Requests.UserService
 {
     public class SetUserStatusModel
     {
