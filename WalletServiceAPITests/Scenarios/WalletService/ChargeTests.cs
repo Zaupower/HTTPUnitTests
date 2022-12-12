@@ -95,10 +95,49 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         public async Task Charge_ValidUserBalanceBelowZero_ReturnStatusIsInternalServerError
             ([Values(3)] int userId, [Values(-10)] double balance, [Values(-40)] double amount)
         {
-            string expectedContent = "User have '" + string.Format(GetNfi(".", 2), "{0:N}", balance) + "', you try to charge '" + string.Format(GetNfi(".", 1), "{0:N}", amount) + "'.";
+            string expectedContent = "User have '" +balance.ToString("G", CultureInfo.InvariantCulture) + "', you try to charge '" + amount.ToString("G", CultureInfo.InvariantCulture) + "'.";
             //Precondition
             await SetBalance(userId, balance);
-            var currentBalanceResponse = await _serviceProvider.GetBalance(userId);
+            ChargeModel charge = new ChargeModel
+            {
+                amount = amount,
+                userId = userId,
+            };
+            //Action
+            var response = await _serviceProvider.PostCharge(charge);
+            //Assert
+            Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
+            Assert.AreEqual(null, response.Body);
+            Assert.AreEqual(expectedContent, response.Content);
+        }
+        //If the amount = 0 => Code:  500; Message “Amount cannot be '0'”
+        [Test]
+        public async Task Charge_ValidUserChargeZero_ReturnStatusIsInternalServerError
+            ([Values(3)] int userId, [Values(0)] double amount)
+        {
+            string expectedContent = "Amount cannot be '0'";
+            ChargeModel charge = new ChargeModel
+            {
+                amount = amount,
+                userId = userId,
+            };
+            //Action
+            var response = await _serviceProvider.PostCharge(charge);
+            //Assert
+            Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
+            Assert.AreEqual(null, response.Body);
+            Assert.AreEqual(expectedContent, response.Content);
+        }
+        //If the amount + balance > 10 000 000=> Code:  500;
+        //Message  “After this charge balance could be '{amount + balance}', maximum user balance is '10000000'”
+        [Test]
+        public async Task Charge_ValidUserMaximumUserBalance_ReturnStatusIsInternalServerError
+            ([Values(3)] int userId, [Values(-10, 0, 500)] double balance, [Values(10000012, 10002001, 19000501)] double amount)
+        {
+
+            string expectedContent = $"After this charge balance could be '"+ (amount + balance).ToString("G", CultureInfo.InvariantCulture) + "', maximum user balance is '10000000'";
+            //Precondition
+            await SetBalance(userId, balance);
             ChargeModel charge = new ChargeModel
             {
                 amount = amount,
@@ -112,49 +151,58 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             Assert.AreEqual(expectedContent, response.Content);
         }
 
-
-        #region Helper Functions
-        private static NumberFormatInfo GetNfi(string separator, int numberOfDecimalDigits)
+        //If the write-off amount after the decimal point has more than two decimal places => Code:  500;
+        //Message “ Amount value must have precision 2 numbers after dot”
+        [Test]
+        public async Task Charge_ValidUserMoreThanTwoDecimalPlaces_ReturnStatusIsInternalServerError()
         {
-            NumberFormatInfo nfiBalance = new NumberFormatInfo();
-            nfiBalance.NumberDecimalSeparator = separator;
-            nfiBalance.NumberDecimalDigits = numberOfDecimalDigits;
-            return nfiBalance;
+
         }
 
-        private async Task SetBalance(int userId, double balance)
+
+        #region Helper Functions
+        
+        private async Task SetBalance(int userId, double inputBalance)
         {
-            double actualBalance = 0;
+            double actualBalance;
             var currentBalanceResponse = await _serviceProvider.GetBalance(userId);
             actualBalance = currentBalanceResponse.Body;
-
-            ChargeModel charge = new ChargeModel
+            ChargeModel chargeModel = new ChargeModel
             {
                 amount = -actualBalance,
                 userId = userId,
-
             };
-            //Set Balance to 0
-            await _serviceProvider.PostCharge(charge);
-            if (balance >= 0)
-            {              
-                charge.amount = balance;
+
+            if (actualBalance != 0)
+            {
+                chargeModel = new ChargeModel
+                {
+                    amount = -actualBalance,
+                    userId = userId,
+
+                };
+                //Set Balance to 0
+                await _serviceProvider.PostCharge(chargeModel);
+            }
+                
+            if (inputBalance >= 0)
+            {
+                chargeModel.amount = inputBalance;
                 //Add Balance
-                var res = await _serviceProvider.PostCharge(charge);
+                var res = await _serviceProvider.PostCharge(chargeModel);
             }
             else
             {
-                charge.amount = -balance;
-                var resPostCharge = await _serviceProvider.PostCharge(charge);
+                chargeModel.amount = -inputBalance;
+                var resPostCharge = await _serviceProvider.PostCharge(chargeModel);
                 //Charge -20
-                charge.amount = balance;
-                await _serviceProvider.PostCharge(charge);
+                chargeModel.amount = inputBalance;
+                await _serviceProvider.PostCharge(chargeModel);
                 //Cancel (Add 30)
                 var result = await _serviceProvider.RevertTransaction(resPostCharge.Body);
 
                 var currentBalanceResponseAfterNegativeS = await _serviceProvider.GetBalance(userId);
             }
-            Console.WriteLine("fdfd");
         }
 
         
