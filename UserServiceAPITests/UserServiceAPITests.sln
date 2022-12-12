@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserServiceAPITests", "UserServiceAPITests\UserServiceAPITests.csproj", "{C8DF0DF7-0F5F-4BD5-B807-1E07E945D53A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserServiceAPITests", "UserServiceAPITests.csproj", "{C8DF0DF7-0F5F-4BD5-B807-1E07E945D53A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WalletServiceAPITests", "WalletServiceAPITests\WalletServiceAPITests.csproj", "{B4122B51-37E5-470F-B14F-0C3BBDCB9AC1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WalletServiceAPITests", "..\WalletServiceAPITests\WalletServiceAPITests.csproj", "{B4122B51-37E5-470F-B14F-0C3BBDCB9AC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
