@@ -14,7 +14,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         [OneTimeSetUp]
         public void setup()
         {
-            _observer = TestDataObserver.Instance;
+            _observer = new TestDataObserver();
             _serviceProvider.Subscribe(_observer);
         }
         [OneTimeTearDown]
