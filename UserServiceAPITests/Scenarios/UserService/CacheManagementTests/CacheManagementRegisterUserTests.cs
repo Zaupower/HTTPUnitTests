@@ -23,7 +23,7 @@ namespace UserServiceAPITests.Tests.CacheManagementTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _observer = new TestDataObserver();
+            _observer = TestDataObserver.Instance;
             _serviceProvider.Subscribe(_observer);
         }
         [OneTimeTearDown]

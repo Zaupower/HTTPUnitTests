@@ -125,46 +125,29 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         private async Task SetBalance(int userId, double balance)
         {
             double actualBalance = 0;
+            var currentBalanceResponse = await _serviceProvider.GetBalance(userId);
+            actualBalance = currentBalanceResponse.Body;
 
-            if (balance >= 0)
+            ChargeModel charge = new ChargeModel
             {
-                
-                //Precondition
-                var currentBalanceResponse = await _serviceProvider.GetBalance(userId);
-                actualBalance = currentBalanceResponse.Body;
+                amount = -actualBalance,
+                userId = userId,
 
-                ChargeModel netZeroCharge = new ChargeModel
-                {
-                    amount = -actualBalance,
-                    userId = userId,
-
-                };
-                //Set Balance to 0
-                await _serviceProvider.PostCharge(netZeroCharge);
-                netZeroCharge.amount = balance;
+            };
+            //Set Balance to 0
+            await _serviceProvider.PostCharge(charge);
+            if (balance >= 0)
+            {              
+                charge.amount = balance;
                 //Add Balance
-                var res = await _serviceProvider.PostCharge(netZeroCharge);
-
+                var res = await _serviceProvider.PostCharge(charge);
             }
             else
             {
-                var currentBalanceResponse = await _serviceProvider.GetBalance(userId);
-                actualBalance = currentBalanceResponse.Body;
-
-                ChargeModel charge = new ChargeModel
-                {
-                    amount = -actualBalance,
-                    userId = userId,
-
-                };
-                //Set Balance to 0
-                await _serviceProvider.PostCharge(charge);
-
-                //Add 30
-                charge.amount = balance;
+                charge.amount = -balance;
                 var resPostCharge = await _serviceProvider.PostCharge(charge);
                 //Charge -20
-                charge.amount = -balance;
+                charge.amount = balance;
                 await _serviceProvider.PostCharge(charge);
                 //Cancel (Add 30)
                 var result = await _serviceProvider.RevertTransaction(resPostCharge.Body);
