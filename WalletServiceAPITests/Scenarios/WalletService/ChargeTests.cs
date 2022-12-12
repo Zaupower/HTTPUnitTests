@@ -8,16 +8,22 @@ namespace WalletServiceAPITests.Scenarios.WalletService
 {
     public class ChargeTests
     {
-        private WalletServiceServiceProvider _serviceProvider = new();
+        private WalletServiceServiceProvider _serviceProvider = WalletServiceServiceProvider.Instance;
+        private TestDataObserver _observer;
 
-        [SetUp]
+        [OneTimeSetUp]
         public void setup()
         {
-
+            _observer = new TestDataObserver();
+            _serviceProvider.Subscribe(_observer);
         }
-        [TearDown]
-        public void teardown()
+        [OneTimeTearDown]
+        public async Task teardown()
         {
+            foreach(var transactionMade in _observer.GetAll())
+            {
+                await _serviceProvider.RevertTransaction(transactionMade);
+            }
 
         }
 
