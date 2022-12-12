@@ -4,11 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UserServiceAPITests.Models.Requests.UserService;
+using UserServiceAPITests.ServiceProvider;
 
 namespace UserServiceAPITests.Helper
 {
     public class GenerateUsersRequest
     {
+        private static Lazy<GenerateUsersRequest> _instance = new Lazy<GenerateUsersRequest>(() => new GenerateUsersRequest());
+
+        public static GenerateUsersRequest Instance => _instance.Value;
+
         public List<CreateUserRequest> generateUsers(int numberOfUSers)
         {
             List<CreateUserRequest> users = new List<CreateUserRequest>();

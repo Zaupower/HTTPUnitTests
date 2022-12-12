@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +16,8 @@ namespace UserServiceAPITests.Tests.CacheManagementTests
 {
     public class CacheManagementRegisterUserTests
     {
-        private UserServiceServiceProvider _serviceProvider = new UserServiceServiceProvider();
-        private GenerateUsersRequest _generateUsersRequest= new GenerateUsersRequest();
+        private UserServiceServiceProvider _serviceProvider = UserServiceServiceProvider.Instance;
+        private GenerateUsersRequest _generateUsersRequest= GenerateUsersRequest.Instance;
         [SetUp]
         public void Setup()
         {

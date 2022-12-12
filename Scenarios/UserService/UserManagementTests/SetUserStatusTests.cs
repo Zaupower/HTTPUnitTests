@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -13,7 +14,7 @@ namespace UserServiceAPITests.UserManagementTests
     public class UserStatusTests
     {
 
-        private UserServiceServiceProvider _serviceProvider = new UserServiceServiceProvider();
+        private UserServiceServiceProvider _serviceProvider = UserServiceServiceProvider.Instance;
 
         [SetUp]
         public void Setup()

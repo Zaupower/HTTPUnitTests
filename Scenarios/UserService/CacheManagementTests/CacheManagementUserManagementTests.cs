@@ -11,13 +11,14 @@ using UserServiceAPITests.ServiceProvider;
 using UserServiceAPITests.UserManagementTests;
 using UserServiceAPITests.Models.Requests.UserService;
 using UserServiceAPITests.Models.Responses.UserService;
+using NUnit.Framework;
 
 namespace UserServiceAPITests.Tests.CacheManagementTests
 {
     public class CacheManagementUserManagementTests
     {
-        private UserServiceServiceProvider _serviceProvider = new UserServiceServiceProvider();
-        private GenerateUsersRequest _generateUsersRequest = new GenerateUsersRequest();
+        private UserServiceServiceProvider _serviceProvider = UserServiceServiceProvider.Instance;
+        private GenerateUsersRequest _generateUsersRequest = GenerateUsersRequest.Instance;
         [SetUp]
         public void Setup()
         {

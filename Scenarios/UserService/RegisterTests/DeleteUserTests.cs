@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -13,8 +14,8 @@ namespace UserServiceAPITests.RegisterTests
 {
     public class DeleteUserTests
     {
-        private UserServiceServiceProvider _serviceProvider = new UserServiceServiceProvider();
-        private GenerateUsersRequest _generateUsersRequest = new GenerateUsersRequest();
+        private UserServiceServiceProvider _serviceProvider = UserServiceServiceProvider.Instance;
+        private GenerateUsersRequest _generateUsersRequest = GenerateUsersRequest.Instance;
         [SetUp]
         public void Setup()
         {
