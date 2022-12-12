@@ -13,7 +13,7 @@ using UserServiceAPITests.Models.Responses.UserService;
 
 namespace UserServiceAPITests.ServiceProvider
 {
-    public class UserServiceServiceProvider
+    public class UserServiceServiceProvider : IObservable<int>
     {
         private static Lazy<UserServiceServiceProvider> _instance = new Lazy<UserServiceServiceProvider> (()=> new UserServiceServiceProvider());
 
@@ -35,7 +35,19 @@ namespace UserServiceAPITests.ServiceProvider
             };
             HttpResponseMessage response = await httpClient.SendAsync(createUserrequest);
 
-            return await response.ToCommonResponse<int>();
+
+            var communResponse = await response.ToCommonResponse<int>();
+
+            if (communResponse.HttpStatusCode == HttpStatusCode.OK)
+            {
+                //ActiveModel
+                //createdTransactionsIdCollection.Add(communResponse.Body);
+
+                //Reactive
+                NotifyAllObserversAboutNewTransaction(communResponse.Body);
+            }
+
+            return communResponse;
         }
 
         public async Task<HttpResponse<object>> DeleteUser(int userId)
@@ -95,5 +107,25 @@ namespace UserServiceAPITests.ServiceProvider
             HttpResponseMessage response = await httpClient.SendAsync(setUserStatusRequest);
             return await response.ToCommonResponse<object>();
         }
+
+        #region ReactiveModel
+        private List<IObserver<int>> _observer = new List<IObserver<int>>();
+
+
+        public IDisposable Subscribe(IObserver<int> observer)
+        {
+            _observer.Add(observer);
+            return null;
+        }
+
+        //Notify All Observers
+        private void NotifyAllObserversAboutNewTransaction(int id)
+        {
+            foreach (IObserver<int> observer in _observer)
+            {
+                observer.OnNext(id);
+            }
+        }
+        #endregion
     }
 }

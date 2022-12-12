@@ -19,11 +19,23 @@ namespace UserServiceAPITests.Tests.CacheManagementTests
     {
         private UserServiceServiceProvider _serviceProvider = UserServiceServiceProvider.Instance;
         private GenerateUsersRequest _generateUsersRequest = GenerateUsersRequest.Instance;
-        [SetUp]
-        public void Setup()
-        {
-        }
+        private TestDataObserver _observer;
 
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            _observer = new TestDataObserver();
+            _serviceProvider.Subscribe(_observer);
+        }
+        [OneTimeTearDown]
+        public async Task OneTimeTearDown()
+        {
+            foreach (var userCreated in _observer.GetAll())
+            {
+                await _serviceProvider.DeleteUser(userCreated);
+            }
+
+        }
         [Test]
         public async Task GetCacheManagement_CreateUser_ResponseStatusIsOk([Values(0, 1, 7, 15)] int numberOfUsers)
         {

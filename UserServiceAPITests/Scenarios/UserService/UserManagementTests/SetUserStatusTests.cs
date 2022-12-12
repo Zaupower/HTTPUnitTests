@@ -16,11 +16,23 @@ namespace UserServiceAPITests.UserManagementTests
 
         private UserServiceServiceProvider _serviceProvider = UserServiceServiceProvider.Instance;
 
-        [SetUp]
-        public void Setup()
-        {
-        }
+        private TestDataObserver _observer;
 
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            _observer = new TestDataObserver();
+            _serviceProvider.Subscribe(_observer);
+        }
+        [OneTimeTearDown]
+        public async Task OneTimeTearDown()
+        {
+            foreach (var userCreated in _observer.GetAll())
+            {
+                await _serviceProvider.DeleteUser(userCreated);
+            }
+
+        }
         [Test]
         public async Task ValidUser_SetUserStatusTrue_ResponseStatusIsOk([Values(true, false)] bool newUserStatus)
         {
