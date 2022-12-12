@@ -15,6 +15,10 @@ namespace UserServiceAPITests.ServiceProvider
 {
     public class UserServiceServiceProvider
     {
+        private static Lazy<UserServiceServiceProvider> _instance = new Lazy<UserServiceServiceProvider> (()=> new UserServiceServiceProvider());
+
+        public static UserServiceServiceProvider Instance => _instance.Value;
+
         private readonly string _baseUrl = "https://userservice-uat.azurewebsites.net";
         private HttpClient httpClient = new HttpClient();
 
