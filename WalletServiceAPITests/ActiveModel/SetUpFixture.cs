@@ -3,6 +3,7 @@ using WalletServiceAPITests.ServiceProvider;
 
 namespace WalletServiceAPITests
 {
+    //CLASS NOT WORKING PROPERLY FOR EVERY TEST, MAYBE NEED TO MAKE ALL TESTS IN THE SAME NAMESPACE
     [SetUpFixture]
     public class SetUpFixture
     {
