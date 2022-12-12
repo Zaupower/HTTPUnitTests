@@ -14,7 +14,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         [OneTimeSetUp]
         public void setup()
         {
-            _observer = new TestDataObserver();
+            _observer = TestDataObserver.Instance;
             _serviceProvider.Subscribe(_observer);
         }
         [OneTimeTearDown]
@@ -75,7 +75,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         {
             string expectedContent = "User have '" + string.Format(GetNfi(".", 2), "{0:N}", balance) + "', you try to charge '" + string.Format(GetNfi(".", 1), "{0:N}", amount) + "'.";
             //Precondition
-            await SetPositiveBalance(userId, balance);
+            await SetBalance(userId, balance);
             var currentBalanceResponse = await _serviceProvider.GetBalance(userId);
             ChargeModel charge = new ChargeModel
             {
@@ -97,7 +97,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         {
             string expectedContent = "User have '" + string.Format(GetNfi(".", 2), "{0:N}", balance) + "', you try to charge '" + string.Format(GetNfi(".", 1), "{0:N}", amount) + "'.";
             //Precondition
-            await SetNegativeBalance(userId, balance);
+            await SetBalance(userId, balance);
             var currentBalanceResponse = await _serviceProvider.GetBalance(userId);
             ChargeModel charge = new ChargeModel
             {
@@ -122,56 +122,59 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             return nfiBalance;
         }
 
-        private async Task SetPositiveBalance(int userId, double balance)
+        private async Task SetBalance(int userId, double balance)
         {
-            double expectedBody = 0;
             double actualBalance = 0;
-            //Precondition
-            var currentBalanceResponse = await _serviceProvider.GetBalance(userId);
-            actualBalance = currentBalanceResponse.Body;
 
-            ChargeModel netZeroCharge = new ChargeModel
+            if (balance >= 0)
             {
-                amount = -actualBalance,
-                userId = userId,
+                
+                //Precondition
+                var currentBalanceResponse = await _serviceProvider.GetBalance(userId);
+                actualBalance = currentBalanceResponse.Body;
 
-            };
-            //Set Balance to 0
-            await _serviceProvider.PostCharge(netZeroCharge);
-            netZeroCharge.amount = balance;
-            //Add Balance
-            var res = await _serviceProvider.PostCharge(netZeroCharge);            
+                ChargeModel netZeroCharge = new ChargeModel
+                {
+                    amount = -actualBalance,
+                    userId = userId,
+
+                };
+                //Set Balance to 0
+                await _serviceProvider.PostCharge(netZeroCharge);
+                netZeroCharge.amount = balance;
+                //Add Balance
+                var res = await _serviceProvider.PostCharge(netZeroCharge);
+
+            }
+            else
+            {
+                var currentBalanceResponse = await _serviceProvider.GetBalance(userId);
+                actualBalance = currentBalanceResponse.Body;
+
+                ChargeModel charge = new ChargeModel
+                {
+                    amount = -actualBalance,
+                    userId = userId,
+
+                };
+                //Set Balance to 0
+                await _serviceProvider.PostCharge(charge);
+
+                //Add 30
+                charge.amount = balance;
+                var resPostCharge = await _serviceProvider.PostCharge(charge);
+                //Charge -20
+                charge.amount = -balance;
+                await _serviceProvider.PostCharge(charge);
+                //Cancel (Add 30)
+                var result = await _serviceProvider.RevertTransaction(resPostCharge.Body);
+
+                var currentBalanceResponseAfterNegativeS = await _serviceProvider.GetBalance(userId);
+            }
             Console.WriteLine("fdfd");
         }
 
-        private async Task SetNegativeBalance(int userId, double balance)
-        {
-            double actualBalance = 0;
-            //Precondition
-            var currentBalanceResponse = await _serviceProvider.GetBalance(userId);
-            actualBalance = currentBalanceResponse.Body;
-
-            ChargeModel charge = new ChargeModel
-            {
-                amount = -actualBalance,
-                userId = userId,
-
-            };
-            //Set Balance to 0
-            await _serviceProvider.PostCharge(charge);
-
-            //Add 30
-            charge.amount = balance;
-            var resPostCharge = await _serviceProvider.PostCharge(charge);
-            //Charge -20
-            charge.amount = -balance;
-            await _serviceProvider.PostCharge(charge);
-            //Cancel (Add 30)
-            var result = await _serviceProvider.RevertTransaction(resPostCharge.Body);
-
-            var currentBalanceResponseAfterNegativeS = await _serviceProvider.GetBalance(userId);
-            Console.WriteLine("fdfd");
-        }
+        
         #endregion
 
 

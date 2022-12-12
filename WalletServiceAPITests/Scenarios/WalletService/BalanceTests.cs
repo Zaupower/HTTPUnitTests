@@ -7,7 +7,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
     
     public class BalanceTests
     {
-        private WalletServiceServiceProvider _serviceProvider = new();
+        private WalletServiceServiceProvider _serviceProvider = WalletServiceServiceProvider.Instance;
         
         [SetUp]
         public void setup()

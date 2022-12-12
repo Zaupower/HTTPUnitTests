@@ -6,8 +6,8 @@ namespace WalletServiceAPITests
 {
     public class TestDataObserver : IObserver<string>
     {
-        //private static Lazy<TestDataObserver> _instance = new Lazy<TestDataObserver>(() => new TestDataObserver());
-        //public static TestDataObserver Instance => _instance.Value;
+        private static Lazy<TestDataObserver> _instance = new Lazy<TestDataObserver>(() => new TestDataObserver());
+        public static TestDataObserver Instance => _instance.Value;
 
         private ConcurrentBag<string> _createdTransactionsIdCollection = new();
         public void OnCompleted()
