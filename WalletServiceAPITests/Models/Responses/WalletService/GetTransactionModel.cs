@@ -1,4 +1,4 @@
-﻿namespace UserServiceAPITests.Models.Responses.WalletService
+﻿namespace WalletServiceAPITests.Models.Responses.WalletService
 {
     public class GetTransactionModel
     {

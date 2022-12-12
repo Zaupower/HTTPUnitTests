@@ -1,10 +1,5 @@
 ﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UserServiceAPITests.ServiceProvider;
+using WalletServiceAPITests.ServiceProvider;
 
 namespace WalletServiceAPITests
 {
@@ -16,7 +11,7 @@ namespace WalletServiceAPITests
         {
             var provider = WalletServiceServiceProvider.Instance;
 
-            await provider.ReverseAllTransactions();
+            //await provider.ReverseAllTransactions();
         }
     }
 }

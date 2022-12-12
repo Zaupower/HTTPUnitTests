@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
 using System.Net;
-using UserServiceAPITests.ServiceProvider;
+using WalletServiceAPITests.ServiceProvider;
 
-namespace UserServiceAPITests.Tests.WalletService
+namespace WalletServiceAPITests.Scenarios.WalletService
 {
     
     public class BalanceTests

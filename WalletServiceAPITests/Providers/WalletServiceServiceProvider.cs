@@ -1,20 +1,14 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
-using UserServiceAPITests.Extensions;
-using UserServiceAPITests.Models.Requests;
-using UserServiceAPITests.Models.Requests.WalletService;
-using UserServiceAPITests.Models.Responses.Base;
-using UserServiceAPITests.Models.Responses.WalletService;
+using WalletServiceAPITests.Extensions;
+using WalletServiceAPITests.Models.Requests.WalletService;
+using WalletServiceAPITests.Models.Responses.Base;
+using WalletServiceAPITests.Models.Responses.WalletService;
 
-namespace UserServiceAPITests.ServiceProvider
+namespace WalletServiceAPITests.ServiceProvider
 {
-    public class WalletServiceServiceProvider
+    public class WalletServiceServiceProvider : IObservable<string>
     {
         private static Lazy<WalletServiceServiceProvider> _instance = new Lazy<WalletServiceServiceProvider>(() => new WalletServiceServiceProvider());
         public static WalletServiceServiceProvider Instance => _instance.Value;
@@ -51,7 +45,11 @@ namespace UserServiceAPITests.ServiceProvider
 
             if (communResponse.HttpStatusCode == HttpStatusCode.OK)
             {
-                createdTransactionsIdCollection.Add(communResponse.Body);
+                //ActiveModel
+                //createdTransactionsIdCollection.Add(communResponse.Body);
+
+                //Reactive
+                NotifyAllObserversAboutNewTransaction(communResponse.Body);
             }
 
             return communResponse;
@@ -85,15 +83,36 @@ namespace UserServiceAPITests.ServiceProvider
             return await response.ToCommonResponse<string>();
         }
 
-        private List<string> createdTransactionsIdCollection = new();
-        public async Task ReverseAllTransactions()
+        #region ActiveModel
+        //private List<string> createdTransactionsIdCollection = new();
+        //public async Task ReverseAllTransactions()
+        //{
+        //    foreach(string createdTransactionId in createdTransactionsIdCollection)
+        //    {
+        //        await RevertTransaction(createdTransactionId);
+        //    }
+        //    createdTransactionsIdCollection = new();
+        //}
+        #endregion
+
+        #region ReactiveModel
+        private List<IObserver<string>> _observer = new List<IObserver<string>>();
+
+
+        public IDisposable Subscribe(IObserver<string> observer)
         {
-            foreach(string createdTransactionId in createdTransactionsIdCollection)
-            {
-                await RevertTransaction(createdTransactionId);
-            }
-            createdTransactionsIdCollection = new();
+            _observer.Add(observer);
+            return null;
         }
 
+        //Notify All Observers
+        private void NotifyAllObserversAboutNewTransaction(string id)
+        {
+            foreach(IObserver<string> observer in _observer)
+            {
+                observer.OnNext(id);
+            }
+        }
+        #endregion
     }
 }

@@ -1,10 +1,10 @@
 ﻿using NUnit.Framework;
 using System.Globalization;
 using System.Net;
-using UserServiceAPITests.Models.Requests.WalletService;
-using UserServiceAPITests.ServiceProvider;
+using WalletServiceAPITests.Models.Requests.WalletService;
+using WalletServiceAPITests.ServiceProvider;
 
-namespace UserServiceAPITests.Tests.WalletService
+namespace WalletServiceAPITests.Scenarios.WalletService
 {
     public class ChargeTests
     {
