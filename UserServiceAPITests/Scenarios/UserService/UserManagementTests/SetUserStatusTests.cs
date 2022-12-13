@@ -31,6 +31,7 @@ namespace UserServiceAPITests.UserManagementTests
             {
                 await _serviceProvider.DeleteUser(userCreated);
             }
+            _observer.OnCompleted();
 
         }
         [Test]

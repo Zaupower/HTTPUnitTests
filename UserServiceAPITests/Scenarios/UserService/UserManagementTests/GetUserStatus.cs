@@ -30,7 +30,7 @@ namespace UserServiceAPITests.UserManagementTests
             {
                 await _serviceProvider.DeleteUser(userCreated);
             }
-
+            _observer.OnCompleted();
         }
         [Test]
         public async Task ValidUser_GetDefaultUserStatus_ResponseStatusIsOk()

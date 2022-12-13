@@ -21,11 +21,13 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         private UserServiceServiceProvider _userServiceProvider = UserServiceServiceProvider.Instance;
 
         private WalletServiceAPITests.TestDataObserver _observerWallet;
+        private UserServiceAPITests.TestDataObserver _observerUser;
 
         [OneTimeSetUp]
         public void setup()
         {
             _observerWallet = new WalletServiceAPITests.TestDataObserver();
+            _observerUser = new UserServiceAPITests.TestDataObserver();
 
             _walletServiceProvider.Subscribe(_observerWallet);
         }
@@ -36,8 +38,14 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             {
                 await _walletServiceProvider.RevertTransaction(transactionMade);
             }
-        }
 
+            foreach (var userCreated in _observerUser.GetAll())
+            {
+                await _userServiceProvider.DeleteUser(userCreated);
+            }
+            _observerWallet.OnCompleted();
+            _observerUser.OnCompleted();
+        }
         //If user doesn’t exist => empty array
         [Test]
         public async Task GetTransactions_InvalidUserId_ReturnStatusIsOkAndEmptyArray
@@ -105,13 +113,14 @@ namespace WalletServiceAPITests.Scenarios.WalletService
            
             //Precondition
             int userId = await CreateAndVerifyUser();
+            bool isReverted = expedctedTrtansactionStatus == 2? true:false;
             ChargeModel chargeModel = new ChargeModel
             {
                 amount = 10,
                 userId = userId,
             };
                 //Make transaction
-            var chargeResponse = await _walletServiceProvider.PostCharge(chargeModel);
+            var chargeResponse = await _walletServiceProvider.PostCharge(chargeModel, isReverted);
             string transactionId = chargeResponse.Body;
 
             if (expedctedTrtansactionStatus ==2)            

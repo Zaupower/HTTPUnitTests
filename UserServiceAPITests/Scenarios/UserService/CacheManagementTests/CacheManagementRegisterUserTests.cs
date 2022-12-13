@@ -33,7 +33,7 @@ namespace UserServiceAPITests.Tests.CacheManagementTests
             {
                 await _serviceProvider.DeleteUser(userCreated);
             }
-
+            _observer.OnCompleted();
         }
         [Test]        
         public async Task GetCacheManagement_CreateUser_ResponseStatusIsOk([Values(0, 1, 7, 15)] int numberOfUsers)

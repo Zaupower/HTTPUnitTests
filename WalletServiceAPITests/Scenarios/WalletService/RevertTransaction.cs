@@ -36,6 +36,13 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             {
                 await _walletServiceProvider.RevertTransaction(transactionMade);
             }
+
+            foreach (var userCreated in _observerUser.GetAll())
+            {
+                await _userServiceProvider.DeleteUser(userCreated);
+            }
+            _observerWallet.OnCompleted();
+            _observerUser.OnCompleted();
         }
         //If the transaction doesn’t exist =>   Code:  404; Message “ The given key was not present in the dictionary.”
         [Test]
@@ -63,7 +70,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
                 amount = 10,
                 userId = userId,
             };
-            var chargeResponse = await _walletServiceProvider.PostCharge(charge);
+            var chargeResponse = await _walletServiceProvider.PostCharge(charge, true);
                 //revert            
             await _walletServiceProvider.RevertTransaction(chargeResponse.Body);
 

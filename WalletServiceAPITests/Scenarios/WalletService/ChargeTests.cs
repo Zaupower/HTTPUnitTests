@@ -25,6 +25,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             {
                 await _serviceProvider.RevertTransaction(transactionMade);
             }
+            _observer.OnCompleted();
         }
 
         [Test]
@@ -208,7 +209,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             else
             {
                 chargeModel.amount = -inputBalance;
-                var resPostCharge = await _serviceProvider.PostCharge(chargeModel);
+                var resPostCharge = await _serviceProvider.PostCharge(chargeModel, true);
                 //Charge -20
                 chargeModel.amount = inputBalance;
                 await _serviceProvider.PostCharge(chargeModel);

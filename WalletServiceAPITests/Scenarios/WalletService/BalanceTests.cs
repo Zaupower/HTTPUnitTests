@@ -23,6 +23,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             {
                 await _serviceProvider.RevertTransaction(transactionMade);
             }
+            _observer.OnCompleted();
         }
         [Test]
         public async Task GetBalance_VerifiedUser_ResponseStatusIsOk([Values(3)] int userId)

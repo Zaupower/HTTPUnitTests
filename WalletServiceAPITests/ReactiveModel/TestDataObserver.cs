@@ -12,7 +12,7 @@ namespace WalletServiceAPITests
         private ConcurrentBag<string> _createdTransactionsIdCollection = new();
         public void OnCompleted()
         {
-            throw new NotImplementedException();
+            _createdTransactionsIdCollection.Clear();
         }
 
         public void OnError(Exception error)

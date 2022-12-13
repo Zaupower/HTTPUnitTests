@@ -22,7 +22,7 @@ namespace UserServiceAPITests.ServiceProvider
         private readonly string _baseUrl = "https://userservice-uat.azurewebsites.net";
         private HttpClient httpClient = new HttpClient();
 
-        public async Task<HttpResponse<int>> CreateUser(CreateUserRequest request)
+        public async Task<HttpResponse<int>> CreateUser(CreateUserRequest request, bool deleteTest = false)
         {
             string serializedBody = JsonConvert.SerializeObject(request);
 
@@ -38,7 +38,7 @@ namespace UserServiceAPITests.ServiceProvider
 
             var communResponse = await response.ToCommonResponse<int>();
 
-            if (communResponse.HttpStatusCode == HttpStatusCode.OK)
+            if (communResponse.HttpStatusCode == HttpStatusCode.OK && !deleteTest)
             {
                 //ActiveModel
                 //createdTransactionsIdCollection.Add(communResponse.Body);
@@ -50,7 +50,7 @@ namespace UserServiceAPITests.ServiceProvider
             return communResponse;
         }
 
-        public async Task<HttpResponse<object>> DeleteUser(int userId)
+        public async Task<HttpResponse<object>> DeleteUser(int userId, bool fromObserver= false)
         {
             HttpRequestMessage createUserrequest = new HttpRequestMessage
             {
@@ -61,6 +61,8 @@ namespace UserServiceAPITests.ServiceProvider
             HttpResponseMessage response = await httpClient.SendAsync(createUserrequest);
             return await response.ToCommonResponse<object>();
         }
+
+        
 
         public async Task<HttpResponse<object>> SetUserStatus(SetUserStatusModel userStatus)
         {
@@ -125,7 +127,7 @@ namespace UserServiceAPITests.ServiceProvider
             {
                 observer.OnNext(id);
             }
-        }
+        }        
         #endregion
     }
 }

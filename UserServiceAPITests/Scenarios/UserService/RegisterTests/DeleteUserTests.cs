@@ -31,7 +31,7 @@ namespace UserServiceAPITests.RegisterTests
             {
                 await _serviceProvider.DeleteUser(userCreated);
             }
-
+            _observer.OnCompleted();
         }
         [Test]
         public async Task ValidUser_DeleteUser_ResponseStatusIsOk([Values(0, 1, 7, 15)] int numberOfUsers)
@@ -42,7 +42,7 @@ namespace UserServiceAPITests.RegisterTests
 
             foreach (CreateUserRequest requestUser in requestUsers)
             {
-                HttpResponse<int> createUserResponse = await _serviceProvider.CreateUser(requestUser);
+                HttpResponse<int> createUserResponse = await _serviceProvider.CreateUser(requestUser, true);
                 userIdResponse.Add(createUserResponse.Body);
 
             }
@@ -68,7 +68,7 @@ namespace UserServiceAPITests.RegisterTests
                 lastName = "last_name_test1"
             };
 
-            HttpResponse<int> createUserResponse = await _serviceProvider.CreateUser(request);
+            HttpResponse<int> createUserResponse = await _serviceProvider.CreateUser(request, true);
             int userId = createUserResponse.Body;
 
             //Action

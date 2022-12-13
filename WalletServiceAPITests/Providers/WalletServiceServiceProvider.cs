@@ -29,7 +29,7 @@ namespace WalletServiceAPITests.ServiceProvider
             HttpResponseMessage response = await httpClient.SendAsync(getBalanceRequest);
             return await response.ToCommonResponse<double>();
         }
-        public async Task<HttpResponse<string>> PostCharge(ChargeModel charge)
+        public async Task<HttpResponse<string>> PostCharge(ChargeModel charge, bool isReverted= false)
         {
             string serializedBody = JsonConvert.SerializeObject(charge);
 
@@ -43,7 +43,7 @@ namespace WalletServiceAPITests.ServiceProvider
             HttpResponseMessage response = await httpClient.SendAsync(chargeRequest);
             var communResponse = await response.ToCommonResponse<string>();
 
-            if (communResponse.HttpStatusCode == HttpStatusCode.OK)
+            if (communResponse.HttpStatusCode == HttpStatusCode.OK && isReverted)
             {
                 //ActiveModel
                 //createdTransactionsIdCollection.Add(communResponse.Body);

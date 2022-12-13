@@ -35,7 +35,7 @@ namespace UserServiceAPITests.RegisterTests
             {
                 await _serviceProvider.DeleteUser(userCreated);
             }
-
+            _observer.OnCompleted();
         }
         [Test]
         public async Task ValidUser_RegisterNewUSer_ResponseStatusIsOk([Values(0, 1, 7, 15)] int numberOfUsers)
