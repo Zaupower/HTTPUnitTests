@@ -25,7 +25,6 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             {
                 await _serviceProvider.RevertTransaction(transactionMade);
             }
-
         }
 
         [Test]
@@ -96,7 +95,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         public async Task Charge_ValidUserBalanceBelowZero_ReturnStatusIsInternalServerError
             ([Values(3)] int userId, [Values(-10)] double balance, [Values(-40)] double amount)
         {
-            string expectedContent = "User have '" +balance.ToString("G", CultureInfo.InvariantCulture) + "', you try to charge '" + amount.ToString("G", CultureInfo.InvariantCulture) + "'.";
+            string expectedContent = "User have '" + String.Format(CultureInfo.InvariantCulture, "{0:0.00}", balance) + "', you try to charge '" + String.Format(CultureInfo.InvariantCulture, "{0:0.0}", amount) + "'.";
             //Precondition
             await SetBalance(userId, balance);
             ChargeModel charge = new ChargeModel

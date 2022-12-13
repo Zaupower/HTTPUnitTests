@@ -28,7 +28,6 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             _observerUser = new UserServiceAPITests.TestDataObserver();
 
             _walletServiceProvider.Subscribe(_observerWallet);
-            _userServiceProvider.Subscribe(_observerUser);
         }
         [OneTimeTearDown]
         public async Task teardown()
@@ -37,12 +36,6 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             {
                 await _walletServiceProvider.RevertTransaction(transactionMade);
             }
-
-            foreach (var userCreated in _observerUser.GetAll())
-            {
-                await _userServiceProvider.DeleteUser(userCreated);
-            }
-
         }
         //If the transaction doesn’t exist =>   Code:  404; Message “ The given key was not present in the dictionary.”
         [Test]
@@ -59,12 +52,10 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         //If the transaction is already reverted => Code: 500;
         //Message “Transaction '85d6766b-74b6-43cb-8372-b044a2994403' cannot be reversed due to 'Reverted' current status”
         [Test]
-        public async Task RevertTransaction_InvalidGui_ReturnStatusIsNotFound
-            ([Values("5eb58c84 - 2ea7 - 448d - 8f93 - 69f65f93ccc3")] string invalidGuid)
+        public async Task RevertTransaction_InvalidGui_ReturnStatusIsNotFound()
         {
-            string expectedContent = "";
             //Precondition
-            //Create user and verify
+            string expectedContent = "";                
             int userId = await CreateAndVerifyUser();
                 //make charge
             ChargeModel charge = new ChargeModel
@@ -74,7 +65,8 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             };
             var chargeResponse = await _walletServiceProvider.PostCharge(charge);
                 //revert            
-            var response = await _walletServiceProvider.RevertTransaction(chargeResponse.Body);
+            await _walletServiceProvider.RevertTransaction(chargeResponse.Body);
+
             //Action
             var responseSecondRevert = await _walletServiceProvider.RevertTransaction(chargeResponse.Body);
             expectedContent = $"Transaction '{chargeResponse.Body}' cannot be reversed due to 'Reverted' current status";

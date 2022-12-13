@@ -8,18 +8,22 @@ namespace WalletServiceAPITests.Scenarios.WalletService
     public class BalanceTests
     {
         private WalletServiceServiceProvider _serviceProvider = WalletServiceServiceProvider.Instance;
-        
-        [SetUp]
+        private TestDataObserver _observer;
+
+        [OneTimeSetUp]
         public void setup()
         {
-
+            _observer = new TestDataObserver();
+            _serviceProvider.Subscribe(_observer);
         }
-        [TearDown]
-        public void teardown()
+        [OneTimeTearDown]
+        public async Task teardown()
         {
-
+            foreach (var transactionMade in _observer.GetAll())
+            {
+                await _serviceProvider.RevertTransaction(transactionMade);
+            }
         }
-
         [Test]
         public async Task GetBalance_VerifiedUser_ResponseStatusIsOk([Values(3)] int userId)
         {

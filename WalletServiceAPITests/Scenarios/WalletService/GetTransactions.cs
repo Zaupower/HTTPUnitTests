@@ -21,16 +21,13 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         private UserServiceServiceProvider _userServiceProvider = UserServiceServiceProvider.Instance;
 
         private WalletServiceAPITests.TestDataObserver _observerWallet;
-        private UserServiceAPITests.TestDataObserver _observerUser;
 
         [OneTimeSetUp]
         public void setup()
         {
             _observerWallet = new WalletServiceAPITests.TestDataObserver();
-            _observerUser = new UserServiceAPITests.TestDataObserver();
 
             _walletServiceProvider.Subscribe(_observerWallet);
-            _userServiceProvider.Subscribe(_observerUser);
         }
         [OneTimeTearDown]
         public async Task teardown()
@@ -39,12 +36,6 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             {
                 await _walletServiceProvider.RevertTransaction(transactionMade);
             }
-
-            foreach (var userCreated in _observerUser.GetAll())
-            {
-                await _userServiceProvider.DeleteUser(userCreated);
-            }
-
         }
 
         //If user doesn’t exist => empty array
