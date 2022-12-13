@@ -74,7 +74,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         public async Task Charge_ValidUserAmountBelowCurrentAccAmount_ReturnStatusIsInternalServerError
             ([Values(3)] int userId, [Values(10)] double balance, [Values(-20)] double amount)
         {
-            //string expectedContent = "User have '" + string.Format(GetNfi(".", 2), "{0:N}", balance) + "', you try to charge '" + string.Format(GetNfi(".", 1), "{0:N}", amount) + "'.";
+            string expectedContent = "User have '" + String.Format(CultureInfo.InvariantCulture, "{0:0.00}", balance) + "', you try to charge '" + String.Format(CultureInfo.InvariantCulture, "{0:0.0}", amount ) + "'.";
             //Precondition
             await SetBalance(userId, balance);
             var currentBalanceResponse = await _serviceProvider.GetBalance(userId);
@@ -88,7 +88,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             //Assert
             Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
             Assert.AreEqual(null, response.Body);
-            Assert.AreEqual("expectedContent", response.Content);
+            Assert.AreEqual(expectedContent, response.Content);
         }
         //If the balance is <0 and the amount is <0 => Code:  500;
         //Message “User has '-30', you try to charge '-40'.”
@@ -135,7 +135,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         public async Task Charge_ValidUserMaximumUserBalance_ReturnStatusIsInternalServerError
             ([Values(3)] int userId, [Values(-10, 0, 500)] double balance, [Values(10000012, 10002001, 19000501)] double amount)
         {
-            //var valueString = (amount + balance).ToString("0.00", CultureInfo.InvariantCulture);
+            
             string expectedContent = $"After this charge balance could be '"+ String.Format(CultureInfo.InvariantCulture,"{0:0.00}", amount + balance) + "', maximum user balance is '10000000'";
             //Precondition
             await SetBalance(userId, balance);
@@ -155,9 +155,23 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         //If the write-off amount after the decimal point has more than two decimal places => Code:  500;
         //Message “ Amount value must have precision 2 numbers after dot”
         [Test]
-        public async Task Charge_ValidUserMoreThanTwoDecimalPlaces_ReturnStatusIsInternalServerError()
+        public async Task Charge_ValidUserMoreThanTwoDecimalPlaces_ReturnStatusIsInternalServerError
+            ([Values(3)] int userId, [Values(10)] double balance, [Values(5.008)] double amount)
         {
-
+            string expectedContent = "Amount value must have precision 2 numbers after dot";
+            //Precondition
+            await SetBalance(userId, balance);
+            ChargeModel charge = new ChargeModel
+            {
+                amount = amount,
+                userId = userId,
+            };
+            //Action
+            var response = await _serviceProvider.PostCharge(charge);
+            //Assert
+            Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
+            Assert.AreEqual(null, response.Body);
+            Assert.AreEqual(expectedContent, response.Content);
         }
 
 
