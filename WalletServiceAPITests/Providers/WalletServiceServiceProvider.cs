@@ -60,7 +60,7 @@ namespace WalletServiceAPITests.ServiceProvider
 
             HttpRequestMessage chargeRequest = new HttpRequestMessage
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethod.Get,
                 RequestUri = new Uri($"{_baseUrl}/Balance/GetTransactions?userId={userId}")
 
             };

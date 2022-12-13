@@ -156,7 +156,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         //Message “ Amount value must have precision 2 numbers after dot”
         [Test]
         public async Task Charge_ValidUserMoreThanTwoDecimalPlaces_ReturnStatusIsInternalServerError
-            ([Values(3)] int userId, [Values(10)] double balance, [Values(5.008)] double amount)
+            ([Values(3)] int userId, [Values(10, -10)] double balance, [Values(5.008)] double amount)
         {
             string expectedContent = "Amount value must have precision 2 numbers after dot";
             //Precondition
