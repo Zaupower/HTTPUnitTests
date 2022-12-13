@@ -52,9 +52,10 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         public async Task GetTransactions_InvalidUserId_ReturnStatusIsOkAndEmptyArray
             ([Values(0, -1)] int userId)
         {
+            //Action
             var response = await _walletServiceProvider.GetTransactions(userId);
             List<GetTransactionModel> responseTransactions = response.Body;
-            
+            //Assert
             Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);
             Assert.IsEmpty(responseTransactions);
             Assert.AreEqual(response.Content, "[]");
@@ -75,7 +76,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             };
                 //Make transaction
             await _walletServiceProvider.PostCharge(chargeModel);
-            //Set status false
+                //Set status false
             SetUserStatusModel userStatusModel = new SetUserStatusModel
             {
                 UserId = userId,
@@ -118,17 +119,19 @@ namespace WalletServiceAPITests.Scenarios.WalletService
                 amount = 10,
                 userId = userId,
             };
-            //Make transaction
+                //Make transaction
             var chargeResponse = await _walletServiceProvider.PostCharge(chargeModel);
             string transactionId = chargeResponse.Body;
+
             if (expedctedTrtansactionStatus ==2)            
                 await _walletServiceProvider.RevertTransaction(transactionId);
-                //transactionId = revertTransactionResponse.Body;
 
+            //Action
             var getTransactionsResponse = await _walletServiceProvider.GetTransactions(userId);
             List<GetTransactionModel> transactions = getTransactionsResponse.Body;
             GetTransactionModel transaction = transactions.FirstOrDefault(i => i.transactionId == transactionId);
-
+            
+            //Assert
             Assert.AreEqual(chargeModel.amount, transaction.amount);
             Assert.AreEqual(chargeModel.userId, transaction.userId);
             Assert.AreEqual(expedctedTrtansactionStatus, transaction.status);
