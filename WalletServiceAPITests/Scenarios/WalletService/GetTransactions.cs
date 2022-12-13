@@ -15,7 +15,7 @@ using WalletServiceAPITests.ServiceProvider;
 
 namespace WalletServiceAPITests.Scenarios.WalletService
 {
-    public class GetTransactions
+    public class GetTransactions 
     {
         private WalletServiceServiceProvider _walletServiceProvider = WalletServiceServiceProvider.Instance;
         private UserServiceServiceProvider _userServiceProvider = UserServiceServiceProvider.Instance;
@@ -139,6 +139,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         }
 
         #region Helper
+
         public async Task<int> CreateAndVerifyUser(bool verifyUser = true)
         {
             CreateUserRequest request = new CreateUserRequest
