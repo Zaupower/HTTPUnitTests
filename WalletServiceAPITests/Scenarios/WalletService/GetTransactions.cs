@@ -64,35 +64,27 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         [Test]
         public async Task GetTransactions_UnverifiedUser_ReturnStatusIsOkAndEmptyArray()
         {
-            //Create user => get id
+
             //Precondition
-            CreateUserRequest request = new CreateUserRequest
-            {
-                firstName = "firstName_test_getTransaction_unverifiedUser",
-                lastName = "lastName_test_getTransaction_unverifiedUser"
-            };
-            //Create User
-            HttpResponse<int> responseCreateUser = await _userServiceProvider.CreateUser(request);
-            SetUserStatusModel userStatusModel = new SetUserStatusModel
-            {
-                UserId = responseCreateUser.Body,
-                NewStatus = true
-            };
-            //Set user status true
-            await _userServiceProvider.SetUserStatus(userStatusModel);
+            int userId = await CreateAndVerifyUser();
+
             ChargeModel chargeModel = new ChargeModel
             {
                 amount = 10,
-                userId = responseCreateUser.Body,
+                userId = userId,
             };
-            //Make transaction
+                //Make transaction
             await _walletServiceProvider.PostCharge(chargeModel);
             //Set status false
-            userStatusModel.NewStatus = false;
+            SetUserStatusModel userStatusModel = new SetUserStatusModel
+            {
+                UserId = userId,
+                NewStatus = false
+            };
             await _userServiceProvider.SetUserStatus(userStatusModel);
             
             //Action
-            var response = await _walletServiceProvider.GetTransactions(responseCreateUser.Body);
+            var response = await _walletServiceProvider.GetTransactions(userId);
             List<GetTransactionModel> responseTransactions = response.Body;
             //Assert
             Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);
@@ -105,7 +97,47 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             ([Values(false, true) ] bool activeUser)
         {
             //Precondition
-            //Create User
+            int userId = await CreateAndVerifyUser(activeUser);
+
+            //Action
+            var response = await _walletServiceProvider.GetTransactions(userId);
+            List<GetTransactionModel> responseTransactions = response.Body;
+            //Assert
+            Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);
+            Assert.IsEmpty(responseTransactions);
+        }
+        [Test]
+        public async Task GetTransactions_TransactionStatus_CorrectStatus
+            ([Values( 2, 1)] int expedctedTrtansactionStatus)
+        {
+           
+            //Precondition
+            int userId = await CreateAndVerifyUser();
+            ChargeModel chargeModel = new ChargeModel
+            {
+                amount = 10,
+                userId = userId,
+            };
+            //Make transaction
+            var chargeResponse = await _walletServiceProvider.PostCharge(chargeModel);
+            string transactionId = chargeResponse.Body;
+            if (expedctedTrtansactionStatus ==2)            
+                await _walletServiceProvider.RevertTransaction(transactionId);
+                //transactionId = revertTransactionResponse.Body;
+
+            var getTransactionsResponse = await _walletServiceProvider.GetTransactions(userId);
+            List<GetTransactionModel> transactions = getTransactionsResponse.Body;
+            GetTransactionModel transaction = transactions.FirstOrDefault(i => i.transactionId == transactionId);
+
+            Assert.AreEqual(chargeModel.amount, transaction.amount);
+            Assert.AreEqual(chargeModel.userId, transaction.userId);
+            Assert.AreEqual(expedctedTrtansactionStatus, transaction.status);
+
+        }
+
+        #region Helper
+        public async Task<int> CreateAndVerifyUser(bool verifyUser = true)
+        {
             CreateUserRequest request = new CreateUserRequest
             {
                 firstName = "firstName_test_getTransaction_unverifiedUser",
@@ -113,32 +145,16 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             };
             //Create User
             HttpResponse<int> responseCreateUser = await _userServiceProvider.CreateUser(request);
-            //Verify User
-            //Set user status true
-            
             SetUserStatusModel userStatusModel = new SetUserStatusModel
             {
                 UserId = responseCreateUser.Body,
                 NewStatus = true
             };
-            if(activeUser)
+            //Set user status true
+            if (verifyUser)
                 await _userServiceProvider.SetUserStatus(userStatusModel);
-
-            ChargeModel chargeModel = new ChargeModel
-            {
-                amount = 10,
-                userId = responseCreateUser.Body,
-            };
-            //Action
-            var response = await _walletServiceProvider.GetTransactions(responseCreateUser.Body);
-            List<GetTransactionModel> responseTransactions = response.Body;
-            //Assert
-            Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);
-            Assert.IsEmpty(responseTransactions);
+            return responseCreateUser.Body;
         }
-
-
-
-
+        #endregion
     }
 }
