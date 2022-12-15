@@ -2,7 +2,9 @@
 using NUnit.Framework;
 using System.Globalization;
 using System.Net;
+using UserServiceAPITests.Models.Requests.UserService;
 using WalletServiceAPITests.Models.Requests.WalletService;
+using WalletServiceAPITests.Models.Responses.Base;
 using WalletServiceAPITests.ServiceProvider;
 
 namespace WalletServiceAPITests.Scenarios.WalletService
@@ -175,8 +177,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         }
 
 
-        #region Helper Functions
-        
+        #region Helper Functions        
         private async Task SetBalance(int userId, double inputBalance)
         {
             double actualBalance;

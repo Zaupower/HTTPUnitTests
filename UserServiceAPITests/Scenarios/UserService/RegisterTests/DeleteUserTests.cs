@@ -16,22 +16,32 @@ namespace UserServiceAPITests.RegisterTests
     {
         private UserServiceServiceProvider _serviceProvider = UserServiceServiceProvider.Instance;
         private GenerateUsersRequest _generateUsersRequest = GenerateUsersRequest.Instance;
-        private TestDataObserver _observer;
+        private TestDataObserver _observerNewUser;
+        private TestDataObserver _observerDeleteUSer;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _observer = TestDataObserver.Instance;
-            _serviceProvider.Subscribe(_observer);
+            _observerNewUser = TestDataObserver.Instance;
+            _observerDeleteUSer = new TestDataObserver();
+
+            _serviceProvider.Subscribe(_observerNewUser);
+            _serviceProvider.SubscribeDeleteUser(_observerDeleteUSer);
         }
         [OneTimeTearDown]
         public async Task OneTimeTearDown()
         {
-            foreach (var userCreated in _observer.GetAll())
+            List<int> newUsers = _observerNewUser.GetAll().ToList();
+            List<int> deletedUsers = _observerDeleteUSer.GetAll().ToList();
+
+            List<int> resultList = newUsers.Except(deletedUsers).ToList();
+
+            foreach (var userCreated in resultList)
             {
                 await _serviceProvider.DeleteUser(userCreated);
             }
-            _observer.OnCompleted();
+            _observerNewUser.OnCompleted();
+            _observerDeleteUSer.OnCompleted();
         }
         [Test]
         public async Task ValidUser_DeleteUser_ResponseStatusIsOk([Values(0, 1, 7, 15)] int numberOfUsers)
@@ -42,7 +52,7 @@ namespace UserServiceAPITests.RegisterTests
 
             foreach (CreateUserRequest requestUser in requestUsers)
             {
-                HttpResponse<int> createUserResponse = await _serviceProvider.CreateUser(requestUser, true);
+                HttpResponse<int> createUserResponse = await _serviceProvider.CreateUser(requestUser);
                 userIdResponse.Add(createUserResponse.Body);
 
             }
@@ -68,7 +78,7 @@ namespace UserServiceAPITests.RegisterTests
                 lastName = "last_name_test1"
             };
 
-            HttpResponse<int> createUserResponse = await _serviceProvider.CreateUser(request, true);
+            HttpResponse<int> createUserResponse = await _serviceProvider.CreateUser(request);
             int userId = createUserResponse.Body;
 
             //Action

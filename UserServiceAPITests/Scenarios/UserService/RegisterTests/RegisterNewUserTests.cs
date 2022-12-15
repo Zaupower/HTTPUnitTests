@@ -20,22 +20,32 @@ namespace UserServiceAPITests.RegisterTests
         private UserServiceServiceProvider _serviceProvider = UserServiceServiceProvider.Instance;
         private GenerateUsersRequest _generateUsersRequest = GenerateUsersRequest.Instance;
 
-        private TestDataObserver _observer;
+        private TestDataObserver _observerNewUser = new TestDataObserver();
+        private TestDataObserver _observerDeleteUSer = new TestDataObserver();
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _observer = TestDataObserver.Instance;
-            _serviceProvider.Subscribe(_observer);
+            _observerNewUser = TestDataObserver.Instance;
+            _observerDeleteUSer = new TestDataObserver();
+
+            _serviceProvider.Subscribe(_observerNewUser);
+            _serviceProvider.SubscribeDeleteUser(_observerDeleteUSer);
         }
         [OneTimeTearDown]
         public async Task OneTimeTearDown()
         {
-            foreach (var userCreated in _observer.GetAll())
+            List<int> newUsers = _observerNewUser.GetAll().ToList();
+            List<int> deletedUsers = _observerDeleteUSer.GetAll().ToList();
+
+            List<int> resultList = newUsers.Except(deletedUsers).ToList();
+
+            foreach (var userCreated in resultList)
             {
                 await _serviceProvider.DeleteUser(userCreated);
             }
-            _observer.OnCompleted();
+            _observerNewUser.OnCompleted();
+            _observerDeleteUSer.OnCompleted();
         }
         [Test]
         public async Task ValidUser_RegisterNewUSer_ResponseStatusIsOk([Values(0, 1, 7, 15)] int numberOfUsers)

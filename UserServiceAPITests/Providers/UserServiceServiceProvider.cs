@@ -22,7 +22,7 @@ namespace UserServiceAPITests.ServiceProvider
         private readonly string _baseUrl = "https://userservice-uat.azurewebsites.net";
         private HttpClient httpClient = new HttpClient();
 
-        public async Task<HttpResponse<int>> CreateUser(CreateUserRequest request, bool deleteTest = false)
+        public async Task<HttpResponse<int>> CreateUser(CreateUserRequest request)
         {
             string serializedBody = JsonConvert.SerializeObject(request);
 
@@ -38,19 +38,19 @@ namespace UserServiceAPITests.ServiceProvider
 
             var communResponse = await response.ToCommonResponse<int>();
 
-            if (communResponse.HttpStatusCode == HttpStatusCode.OK && !deleteTest)
+            if (communResponse.HttpStatusCode == HttpStatusCode.OK)
             {
                 //ActiveModel
                 //createdTransactionsIdCollection.Add(communResponse.Body);
 
                 //Reactive
-                NotifyAllObserversAboutNewTransaction(communResponse.Body);
+                NotifyAllObserversAboutNewUser(communResponse.Body);
             }
 
             return communResponse;
         }
 
-        public async Task<HttpResponse<object>> DeleteUser(int userId, bool fromObserver= false)
+        public async Task<HttpResponse<object>> DeleteUser(int userId)
         {
             HttpRequestMessage createUserrequest = new HttpRequestMessage
             {
@@ -59,7 +59,17 @@ namespace UserServiceAPITests.ServiceProvider
 
             };
             HttpResponseMessage response = await httpClient.SendAsync(createUserrequest);
-            return await response.ToCommonResponse<object>();
+            var communResponse = await response.ToCommonResponse<object>();
+            if (communResponse.HttpStatusCode == HttpStatusCode.OK)
+            {
+                //ActiveModel
+                //createdTransactionsIdCollection.Add(communResponse.Body);
+
+                //Reactive
+                NotifyAllObserversAboutDeleteUser(userId);
+            }
+
+            return communResponse;
         }
 
         
@@ -111,23 +121,39 @@ namespace UserServiceAPITests.ServiceProvider
         }
 
         #region ReactiveModel
-        private List<IObserver<int>> _observer = new List<IObserver<int>>();
+        private List<IObserver<int>> _observerNewUser = new List<IObserver<int>>();
+        private List<IObserver<int>> _observerDeleteUser = new List<IObserver<int>>();
 
 
         public IDisposable Subscribe(IObserver<int> observer)
         {
-            _observer.Add(observer);
+
+            _observerNewUser.Add(observer);
+            return null;
+        }
+        public IDisposable SubscribeDeleteUser(IObserver<int> observer)
+        {
+            _observerDeleteUser.Add(observer);
             return null;
         }
 
-        //Notify All Observers
-        private void NotifyAllObserversAboutNewTransaction(int id)
+        //Notify All Observers about new user
+        private void NotifyAllObserversAboutNewUser(int id)
         {
-            foreach (IObserver<int> observer in _observer)
+            foreach (IObserver<int> observer in _observerNewUser)
             {
                 observer.OnNext(id);
             }
-        }        
+        }
+
+        //Notify All Observers about delete user
+        private void NotifyAllObserversAboutDeleteUser(int id)
+        {
+            foreach (IObserver<int> observer in _observerDeleteUser)
+            {
+                observer.OnNext(id);
+            }
+        }
         #endregion
     }
 }
