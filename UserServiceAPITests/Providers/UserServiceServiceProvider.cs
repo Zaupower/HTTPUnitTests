@@ -154,6 +154,11 @@ namespace UserServiceAPITests.ServiceProvider
                 observer.OnNext(id);
             }
         }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

@@ -20,14 +20,14 @@ namespace UserServiceAPITests.RegisterTests
         private UserServiceServiceProvider _serviceProvider = UserServiceServiceProvider.Instance;
         private GenerateUsersRequest _generateUsersRequest = GenerateUsersRequest.Instance;
 
-        private TestDataObserver _observerNewUser = new TestDataObserver();
-        private TestDataObserver _observerDeleteUSer = new TestDataObserver();
+        private TestDataObserver _observerNewUser;
+        private TestDataObserverDeleteAction _observerDeleteUSer;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             _observerNewUser = TestDataObserver.Instance;
-            _observerDeleteUSer = new TestDataObserver();
+            _observerDeleteUSer = TestDataObserverDeleteAction.Instance;
 
             _serviceProvider.Subscribe(_observerNewUser);
             _serviceProvider.SubscribeDeleteUser(_observerDeleteUSer);
