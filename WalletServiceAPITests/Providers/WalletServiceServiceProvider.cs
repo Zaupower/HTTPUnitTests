@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Net;
 using System.Text;
 using WalletServiceAPITests.Extensions;
@@ -29,7 +30,7 @@ namespace WalletServiceAPITests.ServiceProvider
             HttpResponseMessage response = await httpClient.SendAsync(getBalanceRequest);
             return await response.ToCommonResponse<double>();
         }
-        public async Task<HttpResponse<string>> PostCharge(ChargeModel charge, bool isReverted= false)
+        public async Task<HttpResponse<string>> PostCharge(ChargeModel charge)
         {
             string serializedBody = JsonConvert.SerializeObject(charge);
 
@@ -43,7 +44,7 @@ namespace WalletServiceAPITests.ServiceProvider
             HttpResponseMessage response = await httpClient.SendAsync(chargeRequest);
             var communResponse = await response.ToCommonResponse<string>();
 
-            if (communResponse.HttpStatusCode == HttpStatusCode.OK && isReverted)
+            if (communResponse.HttpStatusCode == HttpStatusCode.OK)
             {
                 //ActiveModel
                 //createdTransactionsIdCollection.Add(communResponse.Body);
@@ -79,8 +80,17 @@ namespace WalletServiceAPITests.ServiceProvider
 
             };
             HttpResponseMessage response = await httpClient.SendAsync(chargeRequest);
+            var communResponse = await response.ToCommonResponse<string>();
+            if (communResponse.HttpStatusCode == HttpStatusCode.OK)
+            {
+                //ActiveModel
+                //createdTransactionsIdCollection.Add(communResponse.Body);
 
-            return await response.ToCommonResponse<string>();
+                //Reactive
+
+                NotifyAllObserversAboutNewRevertTransaction(transactionId);
+            }
+            return communResponse;
         }
 
         #region ActiveModel
@@ -97,6 +107,7 @@ namespace WalletServiceAPITests.ServiceProvider
 
         #region ReactiveModel
         private List<IObserver<string>> _observer = new List<IObserver<string>>();
+        private List<IObserver<string>> _observerRevert = new List<IObserver<string>>();
 
 
         public IDisposable Subscribe(IObserver<string> observer)
@@ -104,8 +115,13 @@ namespace WalletServiceAPITests.ServiceProvider
             _observer.Add(observer);
             return null;
         }
+        public IDisposable SubscribeRevert(IObserver<string> observer)
+        {
+            _observerRevert.Add(observer);
+            return null;
+        }
 
-        //Notify All Observers
+        //Notify All Observers about new transaction
         private void NotifyAllObserversAboutNewTransaction(string id)
         {
             foreach(IObserver<string> observer in _observer)
@@ -113,6 +129,17 @@ namespace WalletServiceAPITests.ServiceProvider
                 observer.OnNext(id);
             }
         }
+
+        //Notify All Observers about new transaction
+        private void NotifyAllObserversAboutNewRevertTransaction(string id)
+        {
+            foreach (IObserver<string> observer in _observerRevert)
+            {
+                observer.OnNext(id);
+            }
+        }
+
+        
         #endregion
     }
 }

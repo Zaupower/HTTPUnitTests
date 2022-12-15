@@ -11,23 +11,38 @@ namespace WalletServiceAPITests.Scenarios.WalletService
 {
     public class ChargeTests
     {
-        private WalletServiceServiceProvider _serviceProvider = WalletServiceServiceProvider.Instance;
-        private TestDataObserver _observer;
+        private WalletServiceServiceProvider _walletServiceProvider = WalletServiceServiceProvider.Instance;
+        private WalletServiceAPITests.TestDataObserver _observerCharge;
+        private WalletServiceAPITests.TestDataObserverDeleteAction _observerRevert;
 
         [OneTimeSetUp]
         public void setup()
         {
-            _observer = new TestDataObserver();
-            _serviceProvider.Subscribe(_observer);
+            _observerCharge = TestDataObserver.Instance;
+            _observerRevert = TestDataObserverDeleteAction.Instance;
+
+            _walletServiceProvider.Subscribe(_observerCharge);
+            _walletServiceProvider.SubscribeRevert(_observerRevert);
+
+
+
         }
         [OneTimeTearDown]
         public async Task teardown()
         {
-            foreach(var transactionMade in _observer.GetAll())
+            //Clean Transactions
+            List<string> newCharges = _observerCharge.GetAll().ToList();
+            List<string> revertedCharges = _observerRevert.GetAll().ToList();
+
+            List<string> resultList = newCharges.Except(revertedCharges).ToList();
+
+            foreach (var userCreated in resultList)
             {
-                await _serviceProvider.RevertTransaction(transactionMade);
+                await _walletServiceProvider.RevertTransaction(userCreated);
             }
-            _observer.OnCompleted();
+
+            _observerCharge.OnCompleted();
+            _observerRevert.OnCompleted();
         }
 
         [Test]
@@ -41,7 +56,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
                            
             };
             //Action
-            var response = await _serviceProvider.PostCharge(charge);
+            var response = await _walletServiceProvider.PostCharge(charge);
 
             //Assert
             Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);
@@ -62,7 +77,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
 
             };
             //Action
-            var response = await _serviceProvider.PostCharge(charge);
+            var response = await _walletServiceProvider.PostCharge(charge);
 
             //Assert
             Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
@@ -79,14 +94,14 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             string expectedContent = "User have '" + String.Format(CultureInfo.InvariantCulture, "{0:0.00}", balance) + "', you try to charge '" + String.Format(CultureInfo.InvariantCulture, "{0:0.0}", amount ) + "'.";
             //Precondition
             await SetBalance(userId, balance);
-            var currentBalanceResponse = await _serviceProvider.GetBalance(userId);
+            var currentBalanceResponse = await _walletServiceProvider.GetBalance(userId);
             ChargeModel charge = new ChargeModel
             {
                 amount = amount,
                 userId = userId,
             };
             //Action
-            var response = await _serviceProvider.PostCharge(charge);
+            var response = await _walletServiceProvider.PostCharge(charge);
             //Assert
             Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
             Assert.AreEqual(null, response.Body);
@@ -107,7 +122,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
                 userId = userId,
             };
             //Action
-            var response = await _serviceProvider.PostCharge(charge);
+            var response = await _walletServiceProvider.PostCharge(charge);
             //Assert
             Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
             Assert.AreEqual(null, response.Body);
@@ -125,7 +140,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
                 userId = userId,
             };
             //Action
-            var response = await _serviceProvider.PostCharge(charge);
+            var response = await _walletServiceProvider.PostCharge(charge);
             //Assert
             Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
             Assert.AreEqual(null, response.Body);
@@ -147,7 +162,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
                 userId = userId,
             };
             //Action
-            var response = await _serviceProvider.PostCharge(charge);
+            var response = await _walletServiceProvider.PostCharge(charge);
             //Assert
             Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
             Assert.AreEqual(null, response.Body);
@@ -169,7 +184,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
                 userId = userId,
             };
             //Action
-            var response = await _serviceProvider.PostCharge(charge);
+            var response = await _walletServiceProvider.PostCharge(charge);
             //Assert
             Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
             Assert.AreEqual(null, response.Body);
@@ -181,7 +196,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         private async Task SetBalance(int userId, double inputBalance)
         {
             double actualBalance;
-            var currentBalanceResponse = await _serviceProvider.GetBalance(userId);
+            var currentBalanceResponse = await _walletServiceProvider.GetBalance(userId);
             actualBalance = currentBalanceResponse.Body;
             ChargeModel chargeModel = new ChargeModel
             {
@@ -198,26 +213,26 @@ namespace WalletServiceAPITests.Scenarios.WalletService
 
                 };
                 //Set Balance to 0
-                await _serviceProvider.PostCharge(chargeModel);
+                await _walletServiceProvider.PostCharge(chargeModel);
             }
                 
             if (inputBalance >= 0)
             {
                 chargeModel.amount = inputBalance;
                 //Add Balance
-                var res = await _serviceProvider.PostCharge(chargeModel);
+                var res = await _walletServiceProvider.PostCharge(chargeModel);
             }
             else
             {
                 chargeModel.amount = -inputBalance;
-                var resPostCharge = await _serviceProvider.PostCharge(chargeModel, true);
+                var resPostCharge = await _walletServiceProvider.PostCharge(chargeModel);
                 //Charge -20
                 chargeModel.amount = inputBalance;
-                await _serviceProvider.PostCharge(chargeModel);
+                await _walletServiceProvider.PostCharge(chargeModel);
                 //Cancel (Add 30)
-                var result = await _serviceProvider.RevertTransaction(resPostCharge.Body);
+                var result = await _walletServiceProvider.RevertTransaction(resPostCharge.Body);
 
-                var currentBalanceResponseAfterNegativeS = await _serviceProvider.GetBalance(userId);
+                var currentBalanceResponseAfterNegativeS = await _walletServiceProvider.GetBalance(userId);
             }
         }
 

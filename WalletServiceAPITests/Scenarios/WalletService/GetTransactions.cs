@@ -20,31 +20,37 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         private WalletServiceServiceProvider _walletServiceProvider = WalletServiceServiceProvider.Instance;
         private UserServiceServiceProvider _userServiceProvider = UserServiceServiceProvider.Instance;
 
-        private WalletServiceAPITests.TestDataObserver _observerWallet;
-        private UserServiceAPITests.TestDataObserver _observerUser;
+        private WalletServiceAPITests.TestDataObserver _observerCharge;
+        private WalletServiceAPITests.TestDataObserverDeleteAction _observerRevert;
 
         [OneTimeSetUp]
         public void setup()
         {
-            _observerWallet = new WalletServiceAPITests.TestDataObserver();
-            _observerUser = new UserServiceAPITests.TestDataObserver();
+            _observerCharge = TestDataObserver.Instance;
+            _observerRevert = TestDataObserverDeleteAction.Instance;
 
-            _walletServiceProvider.Subscribe(_observerWallet);
+            _walletServiceProvider.Subscribe(_observerCharge);
+            _walletServiceProvider.SubscribeRevert(_observerRevert);
+
+           
+
         }
         [OneTimeTearDown]
         public async Task teardown()
         {
-            foreach (var transactionMade in _observerWallet.GetAll())
+            //Clean Transactions
+            List<string> newCharges = _observerCharge.GetAll().ToList();
+            List<string> revertedCharges = _observerRevert.GetAll().ToList();
+
+            List<string> resultList = newCharges.Except(revertedCharges).ToList();
+
+            foreach (var userCreated in resultList)
             {
-                await _walletServiceProvider.RevertTransaction(transactionMade);
+                await _walletServiceProvider.RevertTransaction(userCreated);
             }
 
-            foreach (var userCreated in _observerUser.GetAll())
-            {
-                await _userServiceProvider.DeleteUser(userCreated);
-            }
-            _observerWallet.OnCompleted();
-            _observerUser.OnCompleted();
+            _observerCharge.OnCompleted();
+            _observerRevert.OnCompleted();            
         }
         //If user doesn’t exist => empty array
         [Test]
@@ -113,14 +119,13 @@ namespace WalletServiceAPITests.Scenarios.WalletService
            
             //Precondition
             int userId = await CreateAndVerifyUser();
-            bool isReverted = expedctedTrtansactionStatus == 2? true:false;
             ChargeModel chargeModel = new ChargeModel
             {
                 amount = 10,
                 userId = userId,
             };
                 //Make transaction
-            var chargeResponse = await _walletServiceProvider.PostCharge(chargeModel, isReverted);
+            var chargeResponse = await _walletServiceProvider.PostCharge(chargeModel);
             string transactionId = chargeResponse.Body;
 
             if (expedctedTrtansactionStatus ==2)            

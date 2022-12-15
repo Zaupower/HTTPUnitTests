@@ -7,23 +7,35 @@ namespace WalletServiceAPITests.Scenarios.WalletService
     
     public class BalanceTests
     {
-        private WalletServiceServiceProvider _serviceProvider = WalletServiceServiceProvider.Instance;
-        private TestDataObserver _observer;
+        private WalletServiceServiceProvider _walletServiceProvider = WalletServiceServiceProvider.Instance;
+        private WalletServiceAPITests.TestDataObserver _observerCharge;
+        private WalletServiceAPITests.TestDataObserverDeleteAction _observerRevert;
 
         [OneTimeSetUp]
         public void setup()
         {
-            _observer = new TestDataObserver();
-            _serviceProvider.Subscribe(_observer);
+            _observerCharge = TestDataObserver.Instance;
+            _observerRevert = TestDataObserverDeleteAction.Instance;
+
+            _walletServiceProvider.Subscribe(_observerCharge);
+            _walletServiceProvider.SubscribeRevert(_observerRevert);
         }
         [OneTimeTearDown]
         public async Task teardown()
         {
-            foreach (var transactionMade in _observer.GetAll())
+            //Clean Transactions
+            List<string> newCharges = _observerCharge.GetAll().ToList();
+            List<string> revertedCharges = _observerRevert.GetAll().ToList();
+
+            List<string> resultList = newCharges.Except(revertedCharges).ToList();
+
+            foreach (var userCreated in resultList)
             {
-                await _serviceProvider.RevertTransaction(transactionMade);
+                await _walletServiceProvider.RevertTransaction(userCreated);
             }
-            _observer.OnCompleted();
+
+            _observerCharge.OnCompleted();
+            _observerRevert.OnCompleted();
         }
         [Test]
         public async Task GetBalance_VerifiedUser_ResponseStatusIsOk([Values(3)] int userId)
@@ -31,7 +43,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             //Precondition
 
             //Action
-            var response = await _serviceProvider.GetBalance(userId);            
+            var response = await _walletServiceProvider.GetBalance(userId);            
             
             //Assert
             Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);            
@@ -44,7 +56,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             //Precondition
             double expectedBody = 0;
             //Action
-            var response = await _serviceProvider.GetBalance(userId);
+            var response = await _walletServiceProvider.GetBalance(userId);
 
             //Assert
             Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);

@@ -21,28 +21,34 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         private WalletServiceAPITests.TestDataObserver _observerWallet;
         private UserServiceAPITests.TestDataObserver _observerUser;
 
+        private WalletServiceAPITests.TestDataObserver _observerCharge;
+        private WalletServiceAPITests.TestDataObserverDeleteAction _observerRevert;
+
         [OneTimeSetUp]
         public void setup()
         {
-            _observerWallet = new WalletServiceAPITests.TestDataObserver();
-            _observerUser = new UserServiceAPITests.TestDataObserver();
+            _observerCharge = TestDataObserver.Instance;
+            _observerRevert = TestDataObserverDeleteAction.Instance;
 
-            _walletServiceProvider.Subscribe(_observerWallet);
+            _walletServiceProvider.Subscribe(_observerCharge);
+            _walletServiceProvider.SubscribeRevert(_observerRevert);
         }
         [OneTimeTearDown]
         public async Task teardown()
         {
-            foreach (var transactionMade in _observerWallet.GetAll())
+            //Clean Transactions
+            List<string> newCharges = _observerCharge.GetAll().ToList();
+            List<string> revertedCharges = _observerRevert.GetAll().ToList();
+
+            List<string> resultList = newCharges.Except(revertedCharges).ToList();
+
+            foreach (var userCreated in resultList)
             {
-                await _walletServiceProvider.RevertTransaction(transactionMade);
+                await _walletServiceProvider.RevertTransaction(userCreated);
             }
 
-            foreach (var userCreated in _observerUser.GetAll())
-            {
-                await _userServiceProvider.DeleteUser(userCreated);
-            }
-            _observerWallet.OnCompleted();
-            _observerUser.OnCompleted();
+            _observerCharge.OnCompleted();
+            _observerRevert.OnCompleted();
         }
         //If the transaction doesn’t exist =>   Code:  404; Message “ The given key was not present in the dictionary.”
         [Test]
@@ -70,7 +76,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
                 amount = 10,
                 userId = userId,
             };
-            var chargeResponse = await _walletServiceProvider.PostCharge(charge, true);
+            var chargeResponse = await _walletServiceProvider.PostCharge(charge);
                 //revert            
             await _walletServiceProvider.RevertTransaction(chargeResponse.Body);
 
