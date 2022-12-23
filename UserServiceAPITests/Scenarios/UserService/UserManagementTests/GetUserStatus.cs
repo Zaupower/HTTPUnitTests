@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using UserServiceAPITests.Helper;
 using UserServiceAPITests.Models.Requests.UserService;
 using UserServiceAPITests.Models.Responses.Base;
 using UserServiceAPITests.ServiceProvider;
@@ -14,6 +15,7 @@ namespace UserServiceAPITests.UserManagementTests
     public class GetUserStatus
     {
         private UserServiceServiceProvider _serviceProvider = UserServiceServiceProvider.Instance;
+        private GenerateUsersRequest _generateUsersRequest = GenerateUsersRequest.Instance;
 
         private TestDataObserver _observer;
 
@@ -83,6 +85,30 @@ namespace UserServiceAPITests.UserManagementTests
             Assert.AreEqual(HttpStatusCode.OK, getUserStatusResponse.HttpStatusCode);
             Assert.AreEqual(newUserStatus, getUserStatusResponse.Body);
             StringAssert.AreEqualIgnoringCase(getUserStatusResponse.Body.ToString(), getUserStatusResponse.Content);
+        }
+
+        [Test]
+        public async Task InvalidUser_GetUserStatus_ResponseStatusIsInternalServerError([Values(false)] bool newUserStatus)
+        {
+            //Precondition
+            
+            int userId = 0;
+
+            SetUserStatusModel setUserStatus = new SetUserStatusModel
+            {
+                UserId = userId,
+                NewStatus = newUserStatus
+            };
+
+            await _serviceProvider.SetUserStatus(setUserStatus);
+
+            //Action 
+            HttpResponse<object> getUserStatusResponse = await _serviceProvider.GetUserStatus(userId);
+
+            //Assert
+            Assert.AreEqual(HttpStatusCode.InternalServerError, getUserStatusResponse.HttpStatusCode);
+            Assert.AreEqual(null, getUserStatusResponse.Body);
+            Assert.AreEqual("Sequence contains no elements", getUserStatusResponse.Content);
         }
     }
 }
