@@ -79,5 +79,39 @@ namespace UserServiceAPITests.UserManagementTests
             Assert.AreEqual(null, setUserStatusResponse.Body);
             Assert.AreEqual(setUserStatusResponse.Content, "Sequence contains no elements");
         }
+        
+        [Test]
+        public async Task ValidUser_SetUserStatusFalseTrueFalse_ResponseStatusIsOk()
+        {
+            bool newUserStatus = false;
+            //Precondition
+            CreateUserRequest request = new CreateUserRequest
+            {
+                firstName = "fisrtNameTest1",
+                lastName = "lastNameTest1"
+            };
+
+            HttpResponse<int> createUserresponse = await _serviceProvider.CreateUser(request);
+            SetUserStatusModel setUserStatus = new SetUserStatusModel
+            {
+                UserId = createUserresponse.Body,
+                NewStatus = newUserStatus
+            };
+            await _serviceProvider.SetUserStatus(setUserStatus);
+            //true
+            setUserStatus.NewStatus = true;
+            await _serviceProvider.SetUserStatus(setUserStatus);
+            //false
+            //Action 
+            setUserStatus.NewStatus = false;            
+            HttpResponse<object> setUserStatusResponse = await _serviceProvider.SetUserStatus(setUserStatus);
+
+            //Assert
+            Assert.AreEqual(HttpStatusCode.OK, setUserStatusResponse.HttpStatusCode);
+            Assert.AreEqual(null, setUserStatusResponse.Body);
+            Assert.AreEqual("", setUserStatusResponse.Content);
+        }
+
+
     }
 }
