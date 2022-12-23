@@ -28,5 +28,18 @@ namespace UserServiceAPITests.Helper
 
             return users;
         }
+
+        public CreateUserRequest generateUser()
+        {
+            CreateUserRequest user;
+
+            user = new CreateUserRequest
+            {
+                firstName = "fisrt_name_test",
+                lastName = "last_name_test"
+            };            
+
+            return user;
+        }
     }
 }

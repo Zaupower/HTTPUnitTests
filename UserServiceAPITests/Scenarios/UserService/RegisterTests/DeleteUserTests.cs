@@ -108,5 +108,27 @@ namespace UserServiceAPITests.RegisterTests
             Assert.AreEqual(deleteResponse.Content, "Sequence contains no elements");
             Assert.AreEqual(null, deleteResponse.Body);
         }
+
+        [Test]
+        public async Task ValidUser_DeleteUserAndCreateAnother_SecondUserIdIsPlusOne([Values( 1)] int numberOfUsers)
+        {
+            //Precondition
+            int firstUserIdResponse;
+            int secondUserIdResponse;
+            CreateUserRequest requestUser = _generateUsersRequest.generateUser();
+
+            HttpResponse<int> createUserResponse = await _serviceProvider.CreateUser(requestUser);
+            firstUserIdResponse = createUserResponse.Body;
+            
+            var deleteResponse = await _serviceProvider.DeleteUser(firstUserIdResponse);
+
+            //Action         
+            CreateUserRequest newUser = _generateUsersRequest.generateUser();
+            HttpResponse<int> createNewUserResponse = await _serviceProvider.CreateUser(newUser);
+            secondUserIdResponse = createNewUserResponse.Body;
+            //Assert
+            Assert.AreEqual(secondUserIdResponse, firstUserIdResponse+1);
+            
+        }
     }
 }
