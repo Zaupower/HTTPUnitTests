@@ -9,6 +9,7 @@ using UserServiceAPITests.Helper;
 using UserServiceAPITests.Models.Requests.UserService;
 using UserServiceAPITests.Models.Responses.Base;
 using UserServiceAPITests.ServiceProvider;
+using UserServiceAPITests.UserManagementTests;
 
 namespace UserServiceAPITests.RegisterTests
 {
@@ -45,7 +46,7 @@ namespace UserServiceAPITests.RegisterTests
             _observerDeleteUSer.OnCompleted();
         }
         [Test]
-        public async Task ValidUser_DeleteUser_ResponseStatusIsOk([Values(0, 1, 7, 15)] int numberOfUsers)
+        public async Task ValidUser_DeleteUser_ResponseStatusIsOk([Values(0, 1, 7, 10)] int numberOfUsers, [Values(false, true)] bool activateUsers)
         {
             //Precondition
             List<CreateUserRequest> requestUsers = _generateUsersRequest.generateUsers(numberOfUsers);
@@ -55,7 +56,15 @@ namespace UserServiceAPITests.RegisterTests
             {
                 HttpResponse<int> createUserResponse = await _serviceProvider.CreateUser(requestUser);
                 userIdResponse.Add(createUserResponse.Body);
-
+                if (activateUsers)
+                {
+                    SetUserStatusModel setUserStatus = new SetUserStatusModel
+                    {
+                        UserId = createUserResponse.Body,
+                        NewStatus = true
+                    };
+                    await _serviceProvider.SetUserStatus(setUserStatus);
+                }                
             }
             //Action
             foreach (int userId in userIdResponse)
@@ -110,7 +119,7 @@ namespace UserServiceAPITests.RegisterTests
         }
 
         [Test]
-        public async Task ValidUser_DeleteUserAndCreateAnother_SecondUserIdIsPlusOne([Values( 1)] int numberOfUsers)
+        public async Task ValidUser_DeleteUserAndCreateAnother_SecondUserIdIsPlusOne()
         {
             //Precondition
             int firstUserIdResponse;
@@ -120,15 +129,14 @@ namespace UserServiceAPITests.RegisterTests
             HttpResponse<int> createUserResponse = await _serviceProvider.CreateUser(requestUser);
             firstUserIdResponse = createUserResponse.Body;
             
-            var deleteResponse = await _serviceProvider.DeleteUser(firstUserIdResponse);
+            _serviceProvider.DeleteUser(firstUserIdResponse);
 
             //Action         
             CreateUserRequest newUser = _generateUsersRequest.generateUser();
             HttpResponse<int> createNewUserResponse = await _serviceProvider.CreateUser(newUser);
             secondUserIdResponse = createNewUserResponse.Body;
             //Assert
-            Assert.AreEqual(secondUserIdResponse, firstUserIdResponse+1);
-            
+            Assert.AreEqual(secondUserIdResponse, firstUserIdResponse+1);            
         }
     }
 }
