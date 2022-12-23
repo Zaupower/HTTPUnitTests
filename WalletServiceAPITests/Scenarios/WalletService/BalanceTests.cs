@@ -29,9 +29,6 @@ namespace WalletServiceAPITests.Scenarios.WalletService
 
             _walletServiceProvider.Subscribe(_observerCharge);
             _walletServiceProvider.SubscribeRevert(_observerRevert);
-
-
-
         }
         [OneTimeTearDown]
         public async Task teardown()
