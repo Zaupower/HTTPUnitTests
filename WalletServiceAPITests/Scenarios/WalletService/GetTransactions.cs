@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using UserServiceAPITests.Extensions;
 using UserServiceAPITests.Models.Requests.UserService;
 using UserServiceAPITests.Models.Responses.Base;
 using UserServiceAPITests.ServiceProvider;
@@ -108,5 +109,69 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             Assert.AreEqual(expedctedTrtansactionStatus, transaction.status);
 
         }
+
+        [Test]
+        public async Task GetTransactions_NoTransactionsMade_CorrectStatus()
+        {
+
+            //Precondition
+            int userId = await CreateAndVerifyUser();
+            
+            //Action
+            var getTransactionsResponse = await _walletServiceProvider.GetTransactions(userId);
+            List<GetTransactionModel> transactions = getTransactionsResponse.Body;
+
+            //Assert
+            Assert.AreEqual(transactions.Count,0);
+            //Assert.AreEqual(expedctedTrtansactionStatus, transaction.status);
+
+        }
+
+        [Test]
+        public async Task GetTransactions_OneTransaction_CorrectStatus()
+        {
+            //Precondition
+            int userId = await CreateAndVerifyUser();
+            ChargeModel chargeModel = new ChargeModel
+            {
+                amount = 10,
+                userId = userId,
+            };
+            //Make transaction
+            await _walletServiceProvider.PostCharge(chargeModel);
+            //Action
+            var getTransactionsResponse = await _walletServiceProvider.GetTransactions(userId);
+            List<GetTransactionModel> transactions = getTransactionsResponse.Body;
+
+            //Assert
+            Assert.AreEqual(transactions.Count, 1);
+            //Assert.AreEqual(expedctedTrtansactionStatus, transaction.status);
+        }
+
+        [Test]
+        public async Task GetTransactions_SeveralTransactions_CorrectStatus([Values(3, 30, 55)] int numberOfTransactions)
+        {
+            Random random = new Random();
+            //Precondition
+            int userId = await CreateAndVerifyUser();
+            ChargeModel chargeModel = new ChargeModel();
+            chargeModel.userId = userId;
+
+            //Make transaction
+            for (int i =1; i < numberOfTransactions; i++)
+            {
+                chargeModel.amount = random.NextDouble(1.00, 50000.00);
+                await _walletServiceProvider.PostCharge(chargeModel);
+            }
+            await _walletServiceProvider.PostCharge(chargeModel);
+            //Action
+            var getTransactionsResponse = await _walletServiceProvider.GetTransactions(userId);
+            List<GetTransactionModel> transactions = getTransactionsResponse.Body;
+
+            //Assert
+            Assert.AreEqual(numberOfTransactions, transactions.Count );
+            //Assert.AreEqual(expedctedTrtansactionStatus, transaction.status);
+        }
+
     }
 }

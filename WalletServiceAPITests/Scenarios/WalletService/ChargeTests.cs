@@ -157,8 +157,6 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             charge.amount = -.01;
             await _walletServiceProvider.PostCharge(charge);
 
-            var respBalance1 = await _walletServiceProvider.GetBalance(communUserId);
-
             //Revert
             await _walletServiceProvider.RevertTransaction(firstTransaction.Body);
             await _walletServiceProvider.RevertTransaction(secondTransaction.Body);
