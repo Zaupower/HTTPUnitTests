@@ -13,59 +13,14 @@ using WalletServiceAPITests.ServiceProvider;
 
 namespace WalletServiceAPITests.Scenarios.WalletService
 {
-    public class ChargeTests
+    [TestFixture]
+    public class ChargeTests : BaseWalletServiceTest
     {
-        private WalletServiceServiceProvider _walletServiceProvider = WalletServiceServiceProvider.Instance;
-        private UserServiceServiceProvider _userServiceProvider = UserServiceServiceProvider.Instance;
-
-
-        private GenerateUsersRequest _generateUsersRequest = GenerateUsersRequest.Instance;
-
-        private WalletServiceAPITests.TestDataObserver _observerCharge;
-        private WalletServiceAPITests.TestDataObserverDeleteAction _observerRevert;
-
-        private int communUserId;
-
-        [OneTimeSetUp]
-        public async Task OneTimeSetUp()
-        {
-            _observerCharge = TestDataObserver.Instance;
-            _observerRevert = TestDataObserverDeleteAction.Instance;
-
-            _walletServiceProvider.Subscribe(_observerCharge);
-            _walletServiceProvider.SubscribeRevert(_observerRevert);
-
-            //Create common user
-            CreateUserRequest request = _generateUsersRequest.generateUser();
-            var createUserresponse = await _userServiceProvider.CreateUser(request);
-            SetUserStatusModel setUserStatus = new SetUserStatusModel
-            {
-                UserId = createUserresponse.Body,
-                NewStatus = true
-            };
-            await _userServiceProvider.SetUserStatus(setUserStatus);
-            communUserId = createUserresponse.Body;
-        }
-        [OneTimeTearDown]
-        public async Task OneTimeTearDown()
-        {
-            //Clean Transactions
-            List<string> newCharges = _observerCharge.GetAll().ToList();
-            List<string> revertedCharges = _observerRevert.GetAll().ToList();
-
-            List<string> resultList = newCharges.Except(revertedCharges).ToList();
-
-            foreach (var userCreated in resultList)
-            {
-                await _walletServiceProvider.RevertTransaction(userCreated);
-            }
-
-            _observerCharge.OnCompleted();
-            _observerRevert.OnCompleted();
-        }
+       
         [SetUp]
         public async Task SetUp()
         {            
+
         }
 
         [TearDown]
@@ -329,52 +284,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         }
 
 
-        #region Helper Functions        
-        private async Task SetBalance(int userId, double inputBalance)
-        {
-            double actualBalance;
-            var currentBalanceResponse = await _walletServiceProvider.GetBalance(userId);
-            actualBalance = currentBalanceResponse.Body;
-            ChargeModel chargeModel = new ChargeModel
-            {
-                amount = -actualBalance,
-                userId = userId,
-            };
-
-            if (actualBalance != 0)
-            {
-                chargeModel = new ChargeModel
-                {
-                    amount = -actualBalance,
-                    userId = userId,
-
-                };
-                //Set Balance to 0
-                await _walletServiceProvider.PostCharge(chargeModel);
-            }
-                
-            if (inputBalance >= 0)
-            {
-                chargeModel.amount = inputBalance;
-                //Add Balance
-                var res = await _walletServiceProvider.PostCharge(chargeModel);
-            }
-            else
-            {
-                chargeModel.amount = -inputBalance;
-                var resPostCharge = await _walletServiceProvider.PostCharge(chargeModel);
-                //Charge -20
-                chargeModel.amount = inputBalance;
-                await _walletServiceProvider.PostCharge(chargeModel);
-                //Cancel (Add 30)
-                var result = await _walletServiceProvider.RevertTransaction(resPostCharge.Body);
-
-                var currentBalanceResponseAfterNegativeS = await _walletServiceProvider.GetBalance(userId);
-            }
-        }
-
         
-        #endregion
 
 
     }

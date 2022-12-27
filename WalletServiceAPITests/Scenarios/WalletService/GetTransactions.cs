@@ -15,43 +15,9 @@ using WalletServiceAPITests.ServiceProvider;
 
 namespace WalletServiceAPITests.Scenarios.WalletService
 {
-    public class GetTransactions 
-    {
-        private WalletServiceServiceProvider _walletServiceProvider = WalletServiceServiceProvider.Instance;
-        private UserServiceServiceProvider _userServiceProvider = UserServiceServiceProvider.Instance;
-
-        private WalletServiceAPITests.TestDataObserver _observerCharge;
-        private WalletServiceAPITests.TestDataObserverDeleteAction _observerRevert;
-
-        [OneTimeSetUp]
-        public void setup()
-        {
-            _observerCharge = TestDataObserver.Instance;
-            _observerRevert = TestDataObserverDeleteAction.Instance;
-
-            _walletServiceProvider.Subscribe(_observerCharge);
-            _walletServiceProvider.SubscribeRevert(_observerRevert);
-
-           
-
-        }
-        [OneTimeTearDown]
-        public async Task teardown()
-        {
-            //Clean Transactions
-            List<string> newCharges = _observerCharge.GetAll().ToList();
-            List<string> revertedCharges = _observerRevert.GetAll().ToList();
-
-            List<string> resultList = newCharges.Except(revertedCharges).ToList();
-
-            foreach (var userCreated in resultList)
-            {
-                await _walletServiceProvider.RevertTransaction(userCreated);
-            }
-
-            _observerCharge.OnCompleted();
-            _observerRevert.OnCompleted();            
-        }
+    [TestFixture]
+    public class GetTransactions : BaseWalletServiceTest
+    {       
         //If user doesn’t exist => empty array
         [Test]
         public async Task GetTransactions_InvalidUserId_ReturnStatusIsOkAndEmptyArray
@@ -142,28 +108,5 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             Assert.AreEqual(expedctedTrtansactionStatus, transaction.status);
 
         }
-
-        #region Helper
-
-        public async Task<int> CreateAndVerifyUser(bool verifyUser = true)
-        {
-            CreateUserRequest request = new CreateUserRequest
-            {
-                firstName = "firstName_test_getTransaction_unverifiedUser",
-                lastName = "lastName_test_getTransaction_unverifiedUser"
-            };
-            //Create User
-            HttpResponse<int> responseCreateUser = await _userServiceProvider.CreateUser(request);
-            SetUserStatusModel userStatusModel = new SetUserStatusModel
-            {
-                UserId = responseCreateUser.Body,
-                NewStatus = true
-            };
-            //Set user status true
-            if (verifyUser)
-                await _userServiceProvider.SetUserStatus(userStatusModel);
-            return responseCreateUser.Body;
-        }
-        #endregion
     }
 }
