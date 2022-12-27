@@ -102,10 +102,23 @@ namespace WalletServiceAPITests.Scenarios.WalletService
                 chargeModel.amount = inputBalance;
                 await _walletServiceProvider.PostCharge(chargeModel);
                 //Cancel (Add 30)
-                var result = await _walletServiceProvider.RevertTransaction(resPostCharge.Body);
-
+                var result = await _walletServiceProvider.RevertTransaction(resPostCharge.Body);                
                 var currentBalanceResponseAfterNegativeS = await _walletServiceProvider.GetBalance(userId);
             }
+        }
+
+        internal async Task SetBalanceToZero(int userId)
+        {
+            double actualBalance;
+            var currentBalanceResponse = await _walletServiceProvider.GetBalance(userId);
+            actualBalance = currentBalanceResponse.Body;
+            ChargeModel chargeModel = new ChargeModel
+            {
+                amount = -actualBalance,
+                userId = userId,
+            };
+            //Set Balance to 0
+            await _walletServiceProvider.PostCharge(chargeModel);           
         }
         #endregion
 

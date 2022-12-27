@@ -19,14 +19,14 @@ namespace WalletServiceAPITests.Scenarios.WalletService
        
         [SetUp]
         public async Task SetUp()
-        {            
-
+        {
+            communUserId = await CreateAndVerifyUser();
         }
 
         [TearDown]
         public async Task TearDown()
         {
-            
+            //SetBalanceToZero(communUserId);
         }
         [Test]
         public async Task Charge_ValidUserValidAmount_FinalBalenceIs0()
@@ -134,22 +134,36 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         public async Task Charge_ValidUserValidAmount_FinalBalenceIsMinus10000000Point1()
         {
             //Precondition
-            double[] amounts = { -1000000};
+            
             ChargeModel charge = new ChargeModel();
             charge.userId = communUserId;
-            charge.amount = 5000000;
-            var firstTransaction = await _walletServiceProvider.PostCharge(charge);
-            charge.amount = 5000000.01;
-            var secondTransaction = await _walletServiceProvider.PostCharge(charge);
-            foreach (var amount in amounts)
-            {
-                charge.amount = amount;
-                await _walletServiceProvider.PostCharge(charge);
-            }
 
-            //Revert first transaction
+            charge.amount =.01;
+            var firstTransaction = await _walletServiceProvider.PostCharge(charge);
+
+            charge.amount = 5000000;
+            var secondTransaction = await _walletServiceProvider.PostCharge(charge);
+
+            charge.amount = -5000000;
+            await _walletServiceProvider.PostCharge(charge);
+     
+            charge.amount = 5000000;
+            var thirdTransaction = await _walletServiceProvider.PostCharge(charge);
+
+            charge.amount = -5000000;
+            await _walletServiceProvider.PostCharge(charge);
+            await _walletServiceProvider.PostCharge(charge);
+
+            charge.amount = -.01;
+            await _walletServiceProvider.PostCharge(charge);
+
+            var respBalance1 = await _walletServiceProvider.GetBalance(communUserId);
+
+            //Revert
             await _walletServiceProvider.RevertTransaction(firstTransaction.Body);
             await _walletServiceProvider.RevertTransaction(secondTransaction.Body);
+            await _walletServiceProvider.RevertTransaction(thirdTransaction.Body);            
+            
             ////Action
             var respBalance = await _walletServiceProvider.GetBalance(communUserId);
             //Assert
@@ -205,7 +219,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         public async Task Charge_ValidUserBalanceBelowZero_ReturnStatusIsInternalServerError
             ( [Values(-10)] double balance, [Values(-40)] double amount)
         {
-            string expectedContent = "User have '" + String.Format(CultureInfo.InvariantCulture, "{0:0.00}", balance) + "', you try to charge '" + String.Format(CultureInfo.InvariantCulture, "{0:0.0}", amount) + "'.";
+            string expectedContent = "User have '" + String.Format(CultureInfo.InvariantCulture, "{0:0.0}", balance) + "', you try to charge '" + String.Format(CultureInfo.InvariantCulture, "{0:0.0}", amount) + "'.";
             //Precondition
             await SetBalance(communUserId, balance);
             ChargeModel charge = new ChargeModel
@@ -245,7 +259,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             ([Values(-10, 0, 500)] double balance, [Values(10000012, 10002001, 19000501)] double amount)
         {
             
-            string expectedContent = $"After this charge balance could be '"+ String.Format(CultureInfo.InvariantCulture,"{0:0.00}", amount + balance) + "', maximum user balance is '10000000'";
+            string expectedContent = $"After this charge balance could be '"+ String.Format(CultureInfo.InvariantCulture,"{0:0.0}", amount + balance) + "', maximum user balance is '10000000'";
             //Precondition
             await SetBalance(communUserId, balance);
             ChargeModel charge = new ChargeModel
