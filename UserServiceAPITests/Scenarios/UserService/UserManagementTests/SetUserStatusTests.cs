@@ -7,33 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 using UserServiceAPITests.Models.Requests.UserService;
 using UserServiceAPITests.Models.Responses.Base;
+using UserServiceAPITests.Scenarios;
 using UserServiceAPITests.ServiceProvider;
 
 namespace UserServiceAPITests.UserManagementTests
 {
-    public class UserStatusTests
+    [TestFixture]
+    public class UserStatusTests : UserServiceBaseTest
     {
-
-        private UserServiceServiceProvider _serviceProvider = UserServiceServiceProvider.Instance;
-
-        private TestDataObserver _observer;
-
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
-            _observer = TestDataObserver.Instance;
-            _serviceProvider.Subscribe(_observer);
-        }
-        [OneTimeTearDown]
-        public async Task OneTimeTearDown()
-        {
-            foreach (var userCreated in _observer.GetAll())
-            {
-                await _serviceProvider.DeleteUser(userCreated);
-            }
-            _observer.OnCompleted();
-
-        }
         [Test]
         public async Task ValidUser_SetUserStatusTrue_ResponseStatusIsOk([Values(true, false)] bool newUserStatus)
         {

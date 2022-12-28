@@ -8,43 +8,15 @@ using System.Threading.Tasks;
 using UserServiceAPITests.Helper;
 using UserServiceAPITests.Models.Requests.UserService;
 using UserServiceAPITests.Models.Responses.Base;
+using UserServiceAPITests.Scenarios;
 using UserServiceAPITests.ServiceProvider;
 using UserServiceAPITests.UserManagementTests;
 
 namespace UserServiceAPITests.RegisterTests
 {
-    public class DeleteUserTests
-    {
-        private UserServiceServiceProvider _serviceProvider = UserServiceServiceProvider.Instance;
-        private GenerateUsersRequest _generateUsersRequest = GenerateUsersRequest.Instance;
-
-        private TestDataObserver _observerNewUser;
-        private TestDataObserverDeleteAction _observerDeleteUSer;
-
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
-            _observerNewUser = TestDataObserver.Instance;
-            _observerDeleteUSer = TestDataObserverDeleteAction.Instance;
-
-            _serviceProvider.Subscribe(_observerNewUser);
-            _serviceProvider.SubscribeDeleteUser(_observerDeleteUSer);
-        }
-        [OneTimeTearDown]
-        public async Task OneTimeTearDown()
-        {
-            List<int> newUsers = _observerNewUser.GetAll().ToList();
-            List<int> deletedUsers = _observerDeleteUSer.GetAll().ToList();
-
-            List<int> resultList = newUsers.Except(deletedUsers).ToList();
-
-            foreach (var userCreated in resultList)
-            {
-                await _serviceProvider.DeleteUser(userCreated);
-            }
-            _observerNewUser.OnCompleted();
-            _observerDeleteUSer.OnCompleted();
-        }
+    [TestFixture]
+    public class DeleteUserTests : UserServiceBaseTest
+    {       
         [Test]
         public async Task ValidUser_DeleteUser_ResponseStatusIsOk([Values(0, 1, 7, 10)] int numberOfUsers, [Values(false, true)] bool activateUsers)
         {
