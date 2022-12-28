@@ -266,7 +266,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
         }
 
         [Test]
-        public async Task GetTransactions_TRansactionWithPointZeroOne_CorrectStatus([Values(0.01, -0.01)] double transactionAmount)
+        public async Task GetTransactions_TransactionWithPointZeroOne_CorrectStatus([Values(0.01, -0.01)] double transactionAmount)
         {
             Random random = new Random();
             //Precondition
@@ -289,5 +289,30 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             Assert.That(transaction.baseTransactionId, Is.EqualTo(null));
         }
 
+        //transaction with 10 000 000 amount was created
+        //[Test]
+        //public async Task GetTransactions_TransactionWithAmount10kk_IsCreated([Values(10000000, 10000000.01)] double transactionAmount)
+        //{
+        //    Random random = new Random();
+        //    //Precondition
+        //    int userId = await CreateAndVerifyUser();
+        //    ChargeModel chargeModel = new ChargeModel();
+        //    chargeModel.userId = userId;
+        //    chargeModel.amount = transactionAmount;
+
+        //    var res = await _walletServiceProvider.PostCharge(chargeModel);
+
+        //    //Action
+        //    var getTransactionsResponse = await _walletServiceProvider.GetTransactions(userId);
+        //    List<GetTransactionModel> transactions = getTransactionsResponse.Body;
+        //    GetTransactionModel transaction = transactions.First();
+
+        //    //Assert
+        //    Assert.That(transaction.amount, Is.EqualTo(transactionAmount));
+        //    Assert.That(transaction.time, Is.LessThanOrEqualTo(DateTime.Now));
+        //    Assert.That(transaction.status, Is.GreaterThan(-2));
+        //    Assert.That(transaction.baseTransactionId, Is.EqualTo(null));
+        //}
+        
     }
 }
