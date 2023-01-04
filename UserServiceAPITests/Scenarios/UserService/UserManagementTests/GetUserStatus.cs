@@ -34,9 +34,12 @@ namespace UserServiceAPITests.UserManagementTests
             HttpResponse<object> getUserStatusResponse = await _serviceProvider.GetUserStatus(userId);
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.OK, getUserStatusResponse.HttpStatusCode);
-            Assert.AreEqual(false, getUserStatusResponse.Body);
-            StringAssert.AreEqualIgnoringCase(getUserStatusResponse.Body.ToString(), getUserStatusResponse.Content);
+            Assert.Multiple(() =>
+            { 
+                Assert.AreEqual(HttpStatusCode.OK, getUserStatusResponse.HttpStatusCode);
+                Assert.AreEqual(false, getUserStatusResponse.Body);
+                StringAssert.AreEqualIgnoringCase(getUserStatusResponse.Body.ToString(), getUserStatusResponse.Content);
+            });
         }
 
         [Test]
@@ -64,9 +67,12 @@ namespace UserServiceAPITests.UserManagementTests
             HttpResponse<object> getUserStatusResponse = await _serviceProvider.GetUserStatus(userId);
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.OK, getUserStatusResponse.HttpStatusCode);
-            Assert.AreEqual(newUserStatus, getUserStatusResponse.Body);
-            StringAssert.AreEqualIgnoringCase(getUserStatusResponse.Body.ToString(), getUserStatusResponse.Content);
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(HttpStatusCode.OK, getUserStatusResponse.HttpStatusCode);
+                Assert.AreEqual(newUserStatus, getUserStatusResponse.Body);
+                StringAssert.AreEqualIgnoringCase(getUserStatusResponse.Body.ToString(), getUserStatusResponse.Content);
+            });
         }
 
         [Test]
@@ -88,9 +94,12 @@ namespace UserServiceAPITests.UserManagementTests
             HttpResponse<object> getUserStatusResponse = await _serviceProvider.GetUserStatus(userId);
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.InternalServerError, getUserStatusResponse.HttpStatusCode);
-            Assert.AreEqual(null, getUserStatusResponse.Body);
-            Assert.AreEqual("Sequence contains no elements", getUserStatusResponse.Content);
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(HttpStatusCode.InternalServerError, getUserStatusResponse.HttpStatusCode);
+                Assert.AreEqual(null, getUserStatusResponse.Body);
+                Assert.AreEqual("Sequence contains no elements", getUserStatusResponse.Content);
+            });
         }
     }
 }

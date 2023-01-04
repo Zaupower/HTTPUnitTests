@@ -36,9 +36,12 @@ namespace UserServiceAPITests.UserManagementTests
             HttpResponse<object> setUserStatusResponse = await _serviceProvider.SetUserStatus(setUserStatus);
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.OK, setUserStatusResponse.HttpStatusCode);
-            Assert.AreEqual(null, setUserStatusResponse.Body);
-            Assert.AreEqual("", setUserStatusResponse.Content);
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(HttpStatusCode.OK, setUserStatusResponse.HttpStatusCode);
+                Assert.AreEqual(null, setUserStatusResponse.Body);
+                Assert.AreEqual("", setUserStatusResponse.Content);
+            });
         }
 
         [Test]
@@ -56,9 +59,12 @@ namespace UserServiceAPITests.UserManagementTests
             HttpResponse<object> setUserStatusResponse = await _serviceProvider.SetUserStatus(setUserStatus);
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.InternalServerError, setUserStatusResponse.HttpStatusCode);
-            Assert.AreEqual(null, setUserStatusResponse.Body);
-            Assert.AreEqual(setUserStatusResponse.Content, "Sequence contains no elements");
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(HttpStatusCode.InternalServerError, setUserStatusResponse.HttpStatusCode);
+                Assert.AreEqual(null, setUserStatusResponse.Body);
+                Assert.AreEqual(setUserStatusResponse.Content, "Sequence contains no elements");
+            });
         }
         
         [Test]
@@ -88,9 +94,12 @@ namespace UserServiceAPITests.UserManagementTests
             HttpResponse<object> setUserStatusResponse = await _serviceProvider.SetUserStatus(setUserStatus);
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.OK, setUserStatusResponse.HttpStatusCode);
-            Assert.AreEqual(null, setUserStatusResponse.Body);
-            Assert.AreEqual("", setUserStatusResponse.Content);
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(HttpStatusCode.OK, setUserStatusResponse.HttpStatusCode);
+                Assert.AreEqual(null, setUserStatusResponse.Body);
+                Assert.AreEqual("", setUserStatusResponse.Content);
+            });
         }
 
 
