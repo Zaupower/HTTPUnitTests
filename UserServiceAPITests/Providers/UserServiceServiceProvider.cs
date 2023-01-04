@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using CommonLogic.Models.Responses.Base;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,6 @@ using System.Text;
 using System.Threading.Tasks;
 using UserServiceAPITests.Extensions;
 using UserServiceAPITests.Models.Requests.UserService;
-using UserServiceAPITests.Models.Responses.Base;
 using UserServiceAPITests.Models.Responses.UserService;
 
 namespace UserServiceAPITests.ServiceProvider

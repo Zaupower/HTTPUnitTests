@@ -1,18 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using CommonLogic.Models.Responses.Base;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using UserServiceAPITests.Helper;
 using UserServiceAPITests.Models.Requests.UserService;
-using UserServiceAPITests.Models.Responses;
-using UserServiceAPITests.Models.Responses.Base;
-using UserServiceAPITests.Models.Responses.UserService;
 using UserServiceAPITests.Scenarios;
-using UserServiceAPITests.ServiceProvider;
 
 namespace UserServiceAPITests.RegisterTests
 {

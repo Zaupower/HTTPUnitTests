@@ -6,13 +6,13 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using UserServiceAPITests.Helper;
-using UserServiceAPITests.Models.Responses.Base;
 using UserServiceAPITests.ServiceProvider;
 using UserServiceAPITests.UserManagementTests;
 using UserServiceAPITests.Models.Requests.UserService;
 using UserServiceAPITests.Models.Responses.UserService;
 using NUnit.Framework;
 using UserServiceAPITests.Scenarios;
+using CommonLogic.Models.Responses.Base;
 
 namespace UserServiceAPITests.Tests.CacheManagementTests
 {

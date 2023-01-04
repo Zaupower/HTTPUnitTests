@@ -1,14 +1,8 @@
-﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using CommonLogic.Models.Responses.Base;
+using NUnit.Framework;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using UserServiceAPITests.Models.Requests.UserService;
-using UserServiceAPITests.Models.Responses.Base;
 using UserServiceAPITests.Scenarios;
-using UserServiceAPITests.ServiceProvider;
 
 namespace UserServiceAPITests.UserManagementTests
 {

@@ -1,19 +1,9 @@
-﻿using NUnit.Framework;
-using NUnit.Framework.Constraints;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Linq;
+﻿using CommonLogic.Extensions;
+using NUnit.Framework;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using UserServiceAPITests.Extensions;
 using UserServiceAPITests.Models.Requests.UserService;
-using UserServiceAPITests.Models.Responses.Base;
-using UserServiceAPITests.ServiceProvider;
 using WalletServiceAPITests.Models.Requests.WalletService;
 using WalletServiceAPITests.Models.Responses.WalletService;
-using WalletServiceAPITests.ServiceProvider;
 
 namespace WalletServiceAPITests.Scenarios.WalletService
 {

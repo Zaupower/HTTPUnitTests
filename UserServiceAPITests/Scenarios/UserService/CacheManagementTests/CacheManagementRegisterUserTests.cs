@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using CommonLogic.Models.Responses.Base;
+using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,6 @@ using System.Text;
 using System.Threading.Tasks;
 using UserServiceAPITests.Helper;
 using UserServiceAPITests.Models.Requests.UserService;
-using UserServiceAPITests.Models.Responses.Base;
 using UserServiceAPITests.Models.Responses.UserService;
 using UserServiceAPITests.Scenarios;
 using UserServiceAPITests.ServiceProvider;

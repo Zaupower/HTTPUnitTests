@@ -5,7 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UserServiceAPITests.Models.Responses.Base
+namespace CommonLogic.Models.Responses.Base
 {
     public class HttpResponse<T>
     {

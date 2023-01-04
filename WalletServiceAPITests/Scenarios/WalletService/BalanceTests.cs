@@ -1,11 +1,6 @@
 ﻿using NUnit.Framework;
-using System;
 using System.Net;
-using UserServiceAPITests.Helper;
 using UserServiceAPITests.Models.Requests.UserService;
-using UserServiceAPITests.ServiceProvider;
-using WalletServiceAPITests.Models.Responses.Base;
-using WalletServiceAPITests.ServiceProvider;
 
 namespace WalletServiceAPITests.Scenarios.WalletService
 {

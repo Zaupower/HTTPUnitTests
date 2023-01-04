@@ -1,11 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using UserServiceAPITests.Models.Responses.Base;
+﻿using CommonLogic.Models.Responses.Base;
+using Newtonsoft.Json;
 
 namespace UserServiceAPITests.Extensions
 {

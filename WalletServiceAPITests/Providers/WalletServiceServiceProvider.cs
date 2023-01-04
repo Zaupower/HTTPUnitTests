@@ -1,10 +1,9 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using CommonLogic.Models.Responses.Base;
+using Newtonsoft.Json;
 using System.Net;
 using System.Text;
-using WalletServiceAPITests.Extensions;
+using UserServiceAPITests.Extensions;
 using WalletServiceAPITests.Models.Requests.WalletService;
-using WalletServiceAPITests.Models.Responses.Base;
 using WalletServiceAPITests.Models.Responses.WalletService;
 
 namespace WalletServiceAPITests.ServiceProvider

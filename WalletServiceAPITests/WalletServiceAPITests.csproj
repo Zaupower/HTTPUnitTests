@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CommonLogic\CommonLogic.csproj" />
     <ProjectReference Include="..\UserServiceAPITests\UserServiceAPITests.csproj" />
   </ItemGroup>
 

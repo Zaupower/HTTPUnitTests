@@ -8,7 +8,6 @@ using UserServiceAPITests.Models.Requests.UserService;
 using UserServiceAPITests.ServiceProvider;
 using UserServiceAPITests.UserManagementTests;
 using WalletServiceAPITests.Models.Requests.WalletService;
-using WalletServiceAPITests.Models.Responses.Base;
 using WalletServiceAPITests.ServiceProvider;
 
 namespace WalletServiceAPITests.Scenarios.WalletService
