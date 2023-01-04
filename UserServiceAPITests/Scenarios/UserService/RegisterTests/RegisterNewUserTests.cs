@@ -78,15 +78,13 @@ namespace UserServiceAPITests.RegisterTests
         }
 
         [Test]
-        public async Task ValidUser_RegisterNewUserFirstNameLastNameEmpty_ResponseStatusIsOk(
-            [Values("")] string firstName,
-            [Values("")] string lastName)
+        public async Task ValidUser_RegisterNewUserFirstNameLastNameEmpty_ResponseStatusIsOk()
         {
             //Precondition
             CreateUserRequest request = new CreateUserRequest
             {
-                firstName = firstName,
-                lastName = lastName
+                firstName = "",
+                lastName = ""
             };
 
             //Action
