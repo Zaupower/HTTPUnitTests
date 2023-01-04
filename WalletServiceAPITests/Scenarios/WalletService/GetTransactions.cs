@@ -124,7 +124,6 @@ namespace WalletServiceAPITests.Scenarios.WalletService
 
             //Assert
             Assert.AreEqual(transactions.Count,0);
-            //Assert.AreEqual(expedctedTrtansactionStatus, transaction.status);
 
         }
 
@@ -146,7 +145,6 @@ namespace WalletServiceAPITests.Scenarios.WalletService
 
             //Assert
             Assert.AreEqual(transactions.Count, 1);
-            //Assert.AreEqual(expedctedTrtansactionStatus, transaction.status);
         }
         
         [Test]
@@ -250,7 +248,6 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             List<GetTransactionModel> transactions = getTransactionsResponse.Body;
 
             //Assert
-
             GetTransactionModel firstTransaction = transactions[1];
             GetTransactionModel revertTransaction = transactions[0];
             
