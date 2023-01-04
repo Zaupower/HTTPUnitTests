@@ -61,8 +61,11 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             var response = await _walletServiceProvider.GetTransactions(userId);
             List<GetTransactionModel> responseTransactions = response.Body;
             //Assert
-            Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);
-            Assert.IsNotEmpty(responseTransactions);
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);
+                Assert.IsNotEmpty(responseTransactions);
+            });
         }
 
         //If there are no transactions by user => empty array
@@ -77,8 +80,11 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             var response = await _walletServiceProvider.GetTransactions(userId);
             List<GetTransactionModel> responseTransactions = response.Body;
             //Assert
-            Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);
-            Assert.IsEmpty(responseTransactions);
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(HttpStatusCode.OK, response.HttpStatusCode);
+                Assert.IsEmpty(responseTransactions);
+            });
         }
         [Test]
         public async Task GetTransactions_TransactionStatus_CorrectStatus
@@ -103,11 +109,14 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             var getTransactionsResponse = await _walletServiceProvider.GetTransactions(userId);
             List<GetTransactionModel> transactions = getTransactionsResponse.Body;
             GetTransactionModel transaction = transactions.FirstOrDefault(i => i.transactionId == transactionId);
-            
+
             //Assert
-            Assert.AreEqual(chargeModel.amount, transaction.amount);
-            Assert.AreEqual(chargeModel.userId, transaction.userId);
-            Assert.AreEqual(expedctedTrtansactionStatus, transaction.status);
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(chargeModel.amount, transaction.amount);
+                Assert.AreEqual(chargeModel.userId, transaction.userId);
+                Assert.AreEqual(expedctedTrtansactionStatus, transaction.status);
+            });
 
         }
 
@@ -220,10 +229,13 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             //Assert
             foreach(var transaction in transactions)
             {
-                Assert.That(transaction.amount, Is.GreaterThan(0));
-                Assert.That(transaction.time, Is.LessThanOrEqualTo(DateTime.Now));
-                Assert.That(transaction.status, Is.GreaterThan(-2));
-                Assert.That(transaction.baseTransactionId, Is.EqualTo(null));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(transaction.amount, Is.GreaterThan(0));
+                    Assert.That(transaction.time, Is.LessThanOrEqualTo(DateTime.Now));
+                    Assert.That(transaction.status, Is.GreaterThan(-2));
+                    Assert.That(transaction.baseTransactionId, Is.EqualTo(null));
+                });
             }
         }
 
@@ -250,7 +262,9 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             //Assert
             GetTransactionModel firstTransaction = transactions[1];
             GetTransactionModel revertTransaction = transactions[0];
-            
+
+            Assert.Multiple(() =>
+            {
                 Assert.That(firstTransaction.amount, Is.GreaterThan(0));
                 Assert.That(firstTransaction.time, Is.LessThanOrEqualTo(DateTime.Now));
                 Assert.That(firstTransaction.status, Is.GreaterThan(-2));
@@ -260,6 +274,7 @@ namespace WalletServiceAPITests.Scenarios.WalletService
                 Assert.That(revertTransaction.time, Is.LessThanOrEqualTo(DateTime.Now));
                 Assert.That(revertTransaction.status, Is.GreaterThan(-2));
                 Assert.That(revertTransaction.baseTransactionId, Is.EqualTo(transactionResult.Body));            
+            });
         }
 
         [Test]
@@ -280,36 +295,13 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             GetTransactionModel transaction = transactions.First();
 
             //Assert
-            Assert.That(transaction.amount, Is.EqualTo(transactionAmount));
-            Assert.That(transaction.time, Is.LessThanOrEqualTo(DateTime.Now));
-            Assert.That(transaction.status, Is.GreaterThan(-2));
-            Assert.That(transaction.baseTransactionId, Is.EqualTo(null));
-        }
-
-        //transaction with 10 000 000 amount was created
-        //[Test]
-        //public async Task GetTransactions_TransactionWithAmount10kk_IsCreated([Values(10000000, 10000000.01)] double transactionAmount)
-        //{
-        //    Random random = new Random();
-        //    //Precondition
-        //    int userId = await CreateAndVerifyUser();
-        //    ChargeModel chargeModel = new ChargeModel();
-        //    chargeModel.userId = userId;
-        //    chargeModel.amount = transactionAmount;
-
-        //    var res = await _walletServiceProvider.PostCharge(chargeModel);
-
-        //    //Action
-        //    var getTransactionsResponse = await _walletServiceProvider.GetTransactions(userId);
-        //    List<GetTransactionModel> transactions = getTransactionsResponse.Body;
-        //    GetTransactionModel transaction = transactions.First();
-
-        //    //Assert
-        //    Assert.That(transaction.amount, Is.EqualTo(transactionAmount));
-        //    Assert.That(transaction.time, Is.LessThanOrEqualTo(DateTime.Now));
-        //    Assert.That(transaction.status, Is.GreaterThan(-2));
-        //    Assert.That(transaction.baseTransactionId, Is.EqualTo(null));
-        //}
-        
+            Assert.Multiple(() =>
+            {
+                Assert.That(transaction.amount, Is.EqualTo(transactionAmount));
+                Assert.That(transaction.time, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(transaction.status, Is.GreaterThan(-2));
+                Assert.That(transaction.baseTransactionId, Is.EqualTo(null));
+            });
+        }        
     }
 }

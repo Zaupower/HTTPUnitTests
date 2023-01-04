@@ -36,9 +36,12 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             var response = await _walletServiceProvider.GetBalance(userId);
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
-            Assert.AreEqual(expectedBody, response.Body);
-            Assert.AreEqual(response.Content, "not active user");
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
+                Assert.AreEqual(expectedBody, response.Body);
+                Assert.AreEqual(response.Content, "not active user");
+            });
         }
 
         [Test]
@@ -55,9 +58,12 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             var response = await _walletServiceProvider.GetBalance(userId);
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
-            Assert.AreEqual(expectedBody, response.Body);
-            Assert.AreEqual(response.Content, "not active user");
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
+                Assert.AreEqual(expectedBody, response.Body);
+                Assert.AreEqual(response.Content, "not active user");
+            });
         }
     }
 }

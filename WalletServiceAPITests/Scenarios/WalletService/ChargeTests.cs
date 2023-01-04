@@ -184,9 +184,12 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             var response = await _walletServiceProvider.PostCharge(charge);
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
-            Assert.AreEqual(null, response.Body);
-            Assert.AreEqual(response.Content, "not active user");
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
+                Assert.AreEqual(null, response.Body);
+                Assert.AreEqual(response.Content, "not active user");
+            });
         }
 
         //If amount< 0 and there is less money in the account than amount =>
@@ -207,9 +210,12 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             //Action
             var response = await _walletServiceProvider.PostCharge(charge);
             //Assert
-            Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
-            Assert.AreEqual(null, response.Body);
-            Assert.AreEqual(expectedContent, response.Content);
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
+                Assert.AreEqual(null, response.Body);
+                Assert.AreEqual(expectedContent, response.Content);
+            });
         }
         //If the balance is <0 and the amount is <0 => Code:  500;
         //Message “User has '-30', you try to charge '-40'.”
@@ -228,9 +234,12 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             //Action
             var response = await _walletServiceProvider.PostCharge(charge);
             //Assert
-            Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
-            Assert.AreEqual(null, response.Body);
-            Assert.AreEqual(expectedContent, response.Content);
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
+                Assert.AreEqual(null, response.Body);
+                Assert.AreEqual(expectedContent, response.Content);
+            });
         }
         //If the amount = 0 => Code:  500; Message “Amount cannot be '0'”
         [Test]
@@ -246,9 +255,12 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             //Action
             var response = await _walletServiceProvider.PostCharge(charge);
             //Assert
-            Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
-            Assert.AreEqual(null, response.Body);
-            Assert.AreEqual(expectedContent, response.Content);
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
+                Assert.AreEqual(null, response.Body);
+                Assert.AreEqual(expectedContent, response.Content);
+            });
         }
         //If the amount + balance > 10 000 000=> Code:  500;
         //Message  “After this charge balance could be '{amount + balance}', maximum user balance is '10000000'”
@@ -268,9 +280,12 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             //Action
             var response = await _walletServiceProvider.PostCharge(charge);
             //Assert
-            Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
-            Assert.AreEqual(null, response.Body);
-            Assert.AreEqual(expectedContent, response.Content);
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
+                Assert.AreEqual(null, response.Body);
+                Assert.AreEqual(expectedContent, response.Content);
+            });
         }
 
         //If the write-off amount after the decimal point has more than two decimal places => Code:  500;
@@ -290,14 +305,12 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             //Action
             var response = await _walletServiceProvider.PostCharge(charge);
             //Assert
-            Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
-            Assert.AreEqual(null, response.Body);
-            Assert.AreEqual(expectedContent, response.Content);
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(HttpStatusCode.InternalServerError, response.HttpStatusCode);
+                Assert.AreEqual(null, response.Body);
+                Assert.AreEqual(expectedContent, response.Content);
+            });
         }
-
-
-        
-
-
     }
 }
