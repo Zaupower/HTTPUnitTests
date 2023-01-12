@@ -144,5 +144,5 @@ namespace WalletServiceAPITests.Scenarios.WalletService
             return responseCreateUser.Body;
         }
         #endregion
-    }
+    } 
 }
