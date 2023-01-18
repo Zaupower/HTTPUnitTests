@@ -8,7 +8,6 @@ namespace UserServiceAPITests
         private static Lazy<TestDataObserver> _instance = new Lazy<TestDataObserver>(() => new TestDataObserver());
         public static TestDataObserver Instance => _instance.Value;
 
-        public int Key { get; internal set; }
         private ConcurrentBag<int> _createdTransactionsIdCollection = new();
         public void OnCompleted()
         {
