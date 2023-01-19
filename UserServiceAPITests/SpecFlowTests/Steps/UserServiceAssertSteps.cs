@@ -13,10 +13,10 @@ namespace UserServiceAPITests.SpecFlowTests.Steps
     [Binding]
     public class UserServiceAssertSteps
     {
-        private UserServiceServiceProvider _userServiceProvider = UserServiceServiceProvider.Instance;
+        //private UserServiceServiceProvider _userServiceProvider = UserServiceServiceProvider.Instance;
 
-        private ScenarioContext _context;
-        public UserServiceAssertSteps(ScenarioContext context)
+        private DataContext _context;
+        public UserServiceAssertSteps(DataContext context)
         {
             _context = context;
         }
@@ -24,7 +24,7 @@ namespace UserServiceAPITests.SpecFlowTests.Steps
         [Then("Create User Request Status is '(.*)'")]//Assert
         public void ThenCreateUserRequestStatusIsOK(HttpStatusCode expectedStatusCode)
         {
-            HttpResponse<int> response = (HttpResponse<int>)_context["userCreatedResponse"];
+            HttpResponse<int> response = _context.CreateUserResponse;
             Assert.AreEqual(expectedStatusCode, response.HttpStatusCode);
         }
 
