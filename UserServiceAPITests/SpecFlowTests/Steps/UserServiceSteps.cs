@@ -14,19 +14,24 @@ namespace UserServiceAPITests.SpecFlowTests.Steps
     public class UserServiceSteps
     {
         private UserServiceServiceProvider _userServiceProvider = UserServiceServiceProvider.Instance;
-        
+        private ScenarioContext _context;
+        public UserServiceSteps(ScenarioContext context)
+        {
+            _context = context;
+        }
+
         [Given("User registration values are valid")]//Precondition
         public void CreateUser()
         {
             CreateUserRequest user = GenerateUsersRequest.Instance.generateUser();
-            ScenarioContext.Current["userID"] = user;
+            _context["userID"] = user;
         }
         
         [When("Register User")]//Action        
         public async Task RegisterUser()
         {
-            HttpResponse<int> response = await _userServiceProvider.CreateUser((CreateUserRequest)ScenarioContext.Current["userID"]);
-            ScenarioContext.Current["userCreatedResponse"] = response;
+            HttpResponse<int> response = await _userServiceProvider.CreateUser((CreateUserRequest)_context["userID"]);
+            _context["userCreatedResponse"] = response;
         }
     }
 }
